@@ -42,11 +42,30 @@ export default function TrackList({
     return [...GENRE_CATEGORIES, ...extras, 'Unknown']
   }, [tracks])
 
-  const sorted = useMemo(() => {
-    if (!sortBy) return tracks
+  // Stable sort: re-order only when track IDs or sort change, not when
+  // metadata changes via optimistic patches. We sort IDs, then look up
+  // current track objects on every render so edits still appear instantly.
+  const trackIds = useMemo(
+    () => tracks.map(t => t.video_id).join(','),
+    [tracks]
+  )
+  const sortedIds = useMemo(() => {
+    if (!sortBy) return tracks.map(t => t.video_id)
     const dir = sortDir === 'asc' ? 1 : -1
-    return [...tracks].sort((a, b) => compareTracks(a, b, sortBy) * dir)
-  }, [tracks, sortBy, sortDir])
+    return [...tracks]
+      .sort((a, b) => compareTracks(a, b, sortBy) * dir)
+      .map(t => t.video_id)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [trackIds, sortBy, sortDir])
+  const trackById = useMemo(() => {
+    const m = new Map()
+    for (const t of tracks) m.set(t.video_id, t)
+    return m
+  }, [tracks])
+  const sorted = useMemo(
+    () => sortedIds.map(id => trackById.get(id)).filter(Boolean),
+    [sortedIds, trackById]
+  )
 
   // Prune selection to tracks still visible (e.g. after a filter change).
   const visibleIds = useMemo(() => new Set(sorted.map(t => t.video_id)), [sorted])

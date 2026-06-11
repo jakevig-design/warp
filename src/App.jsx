@@ -63,8 +63,8 @@ export default function App() {
     return () => subscription.unsubscribe()
   }, [])
 
-  const { tracks, playlists, playlistTracks, loading, reload } = useLibrary(session)
-  const { saveOverride, toggleStar, bulkSetField, bulkSetStarred } = useOverrides(reload)
+  const { tracks, playlists, playlistTracks, loading, reload, patchTrack } = useLibrary(session)
+  const { saveOverride, toggleStar, bulkSetField, bulkSetStarred } = useOverrides(patchTrack)
   const player = usePlayer(tracks, state.shuffle)
 
   const toast = useCallback((message, error = false) => {

@@ -37,5 +37,13 @@ export function useLibrary(session) {
 
   useEffect(() => { load() }, [load])
 
-  return { tracks, playlists, playlistTracks, loading, error, reload: load }
+  // Local optimistic update: change one track's fields in-place without
+  // hitting Supabase or triggering a full reload.
+  const patchTrack = useCallback((videoId, changes) => {
+    setTracks(prev =>
+      prev.map(t => t.video_id === videoId ? { ...t, ...changes } : t)
+    )
+  }, [])
+
+  return { tracks, playlists, playlistTracks, loading, error, reload: load, patchTrack }
 }

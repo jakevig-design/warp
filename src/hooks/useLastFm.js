@@ -37,6 +37,10 @@ export function useLastFm() {
     }
     const artists = [...byArtist.keys()]
 
+    // Collect all (video_id, genre) updates across batches, then write
+    // in a single upsert at the end — one Supabase round trip total.
+    const updates = []
+
     for (let i = 0; i < artists.length; i += BATCH) {
       const slice = artists.slice(i, i + BATCH)
       const results = await Promise.all(
@@ -48,18 +52,24 @@ export function useLastFm() {
         const genre = pickGenreFromTags(tags)
         if (!genre) continue
         const groupTracks = byArtist.get(artist)
-        const videoIds = groupTracks.map(t => t.video_id)
-        const { error } = await supabase
-          .from('tracks')
-          .update({ genre })
-          .in('video_id', videoIds)
-        if (!error) updated += groupTracks.length
+        for (const t of groupTracks) updates.push({ video_id: t.video_id, genre })
+        updated += groupTracks.length
       }
       const done = Math.min(i + BATCH, artists.length)
       const pct = Math.round((done / artists.length) * 100)
       const remaining = total - updated
       onProgress?.(pct, remaining)
       if (i + BATCH < artists.length) await sleep(120)
+    }
+
+    if (updates.length) {
+      const { error } = await supabase
+        .from('tracks')
+        .upsert(updates, { onConflict: 'video_id' })
+      if (error) {
+        // eslint-disable-next-line no-console
+        console.error('[warp] enrichment write failed', error)
+      }
     }
 
     onProgress?.(100, total - updated)
