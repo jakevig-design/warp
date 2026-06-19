@@ -6,6 +6,7 @@ export const GENRE_CATEGORIES = [
   'Alternative',
   'Ambient',
   'Blues',
+  'Classic Rock',
   'Classical',
   'Country',
   'EDM',
@@ -22,7 +23,7 @@ export const GENRE_CATEGORIES = [
   'Punk',
   'R&B',
   'Reggae',
-  'Classic Rock',
+  
   'Rock',
   'Soul',
   'Soundtrack',
