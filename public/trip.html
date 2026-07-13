@@ -4,8 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Israel trip — bar mitzvah 2027</title>
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+
   <style>
     :root {
       --bg: #f4f3f0;
@@ -36,143 +44,97 @@
       line-height: 1.5;
       overflow-x: hidden;
     }
-    .wrap {
-      max-width: 980px;
-      margin: 0 auto;
-      padding: 20px 16px 48px;
-    }
+    .wrap { max-width: 1040px; margin: 0 auto; padding: 20px 16px 48px; }
 
     /* ── Header ─────────────────────────────── */
     .header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 22px;
+      display: flex; align-items: flex-start; justify-content: space-between;
+      flex-wrap: wrap; gap: 10px; margin-bottom: 22px;
     }
     .title { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
     .subtitle { color: var(--muted); font-size: 12px; margin-top: 4px; }
-    .badge {
-      font-size: 12px;
-      font-weight: 600;
-      padding: 5px 12px;
-      border-radius: 20px;
-      white-space: nowrap;
-    }
+    .badge { font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 20px; white-space: nowrap; }
     .badge.saved  { background: var(--green-bg); color: var(--green-text); }
     .badge.saving { background: var(--warn-bg);  color: var(--warn-text); }
     .badge.error  { background: var(--err-bg);   color: var(--err-text); cursor: help; }
 
-    /* ── Section shell ──────────────────────── */
+    /* ── Sections ───────────────────────────── */
     .section { margin-bottom: 22px; }
     .section-label {
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--muted);
-      margin-bottom: 10px;
+      font-size: 12px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.06em; color: var(--muted); margin-bottom: 10px;
     }
 
-    /* ── KPI tiles ──────────────────────────── */
-    .kpis {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
+    /* ── Top section: KPIs + map ────────────── */
+    .top-section {
+      display: grid; grid-template-columns: 280px 1fr; gap: 16px;
+      margin-bottom: 22px; align-items: start;
     }
-    .kpi {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 14px;
-    }
-    .kpi-label {
-      font-size: 12px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-    .kpi-value { font-size: 24px; font-weight: 700; margin-top: 4px; letter-spacing: -0.02em; }
+    .kpis { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+    .kpi-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    .kpi-value { font-size: 22px; font-weight: 700; margin-top: 4px; letter-spacing: -0.02em; }
     .kpi-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
-    .kpi-value.blue  { color: var(--blue); }
-    .kpi-value.green { color: var(--green); }
-
-    /* ── Chart ──────────────────────────────── */
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 14px;
-    }
-    .legend { display: flex; gap: 18px; margin-bottom: 8px; }
-    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text2); }
-    .swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
-    .swatch.blue  { background: var(--blue); }
-    .swatch.green { background: var(--green); }
-    .chart-wrap { height: 200px; position: relative; }
+    .kpi-value.blue { color: var(--blue); } .kpi-value.green { color: var(--green); }
+    #map { height: 380px; border-radius: 8px; border: 0.5px solid var(--border); }
+    .leaflet-popup-content { font-family: inherit; font-size: 13px; line-height: 1.5; }
 
     /* ── Table ──────────────────────────────── */
-    .table-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-    table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    .table-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; }
+    .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 8px; }
+    table { width: 100%; border-collapse: collapse; }
     th, td {
-      text-align: left;
-      padding: 9px 8px;
-      font-size: 12px;
-      border-bottom: 1px solid var(--border);
-      overflow-wrap: break-word;
-      vertical-align: middle;
+      text-align: left; padding: 8px; font-size: 12px;
+      border-bottom: 1px solid var(--border); overflow-wrap: break-word; vertical-align: middle;
     }
     thead th {
-      color: var(--muted);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-      font-size: 11px;
-      background: var(--surface2);
+      color: var(--muted); font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.03em; font-size: 11px; background: var(--surface2); white-space: nowrap;
     }
-    td.num, th.num { text-align: right; white-space: nowrap; }
-    .col-done { width: 44px; text-align: center; }
+    td.num, th.num { text-align: right; }
+    .col-done { width: 40px; text-align: center; }
     .col-done label { display: flex; align-items: center; justify-content: center; min-height: 32px; }
+    .col-num { width: 30px; text-align: right; color: var(--muted); }
     .col-nights { width: 46px; text-align: right; }
-    .col-money  { width: 68px; }
+    .col-money { width: 72px; }
+    .col-coord { width: 76px; }
+    .col-del { width: 44px; text-align: center; }
     input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--green); cursor: pointer; }
-    tr.booked td { background: var(--green-bg); color: var(--green-text); }
-    tr.booked td .editable { color: var(--green-text); }
-    tfoot td { font-weight: 700; background: var(--surface2); border-bottom: none; }
+    tr.booked td { background: var(--green-bg); }
+    tr.booked td .editable, tr.booked td .col-num { color: var(--green-text); }
+    tr.totals td { font-weight: 700; background: var(--surface2); border-bottom: none; border-top: 1px solid var(--border2); }
 
-    /* ── Editable numbers ───────────────────── */
+    /* ── Editable cells ─────────────────────── */
     .editable {
-      cursor: pointer;
-      border-radius: 4px;
-      padding: 2px 4px;
-      display: inline-block;
-      min-width: 30px;
-      text-align: right;
+      cursor: pointer; border-radius: 4px; padding: 3px 5px; display: inline-block;
+      min-width: 24px; min-height: 22px;
     }
+    td.num .editable { text-align: right; }
+    .editable.empty { color: var(--muted); }
     .editable:hover { background: rgba(42, 120, 214, 0.08); box-shadow: inset 0 0 0 1px var(--border); }
     .edit-input {
-      font: inherit;
-      width: 100%;
-      min-width: 52px;
-      padding: 10px 6px;      /* tall enough for a 44px touch target */
-      border: 1px solid var(--blue);
-      border-radius: 6px;
-      text-align: right;
-      -moz-appearance: textfield;
+      font: inherit; width: 100%; min-width: 46px; min-height: 44px;
+      padding: 6px; border: 1px solid var(--blue); border-radius: 6px; -moz-appearance: textfield;
     }
-    .edit-input::-webkit-outer-spin-button,
-    .edit-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    td.num .edit-input { text-align: right; }
+    .edit-input::-webkit-outer-spin-button, .edit-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     .edit-input:focus { outline: 2px solid rgba(42, 120, 214, 0.35); outline-offset: 1px; }
+
+    .btn-del {
+      width: 36px; height: 36px; border: none; background: none; color: var(--err-text);
+      font-size: 18px; line-height: 1; border-radius: 8px; cursor: pointer;
+    }
+    .btn-del:hover { background: var(--err-bg); }
+    .btn-add {
+      width: 100%; height: 40px; margin-top: 10px; font-size: 13px; font-weight: 500;
+      color: var(--blue); background: var(--surface); border: 1px dashed var(--border2);
+      border-radius: 8px; cursor: pointer;
+    }
+    .btn-add:hover { background: rgba(42, 120, 214, 0.06); border-color: var(--blue); }
 
     /* ── Category cards ─────────────────────── */
     .cat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
-    .cat {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px;
-    }
+    .cat { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
     .cat-name { font-size: 13px; font-weight: 700; margin-bottom: 10px; }
     .cat-row { display: flex; align-items: center; justify-content: space-between; font-size: 13px; padding: 3px 0; }
     .cat-row .lbl { color: var(--muted); text-transform: uppercase; font-size: 11px; letter-spacing: 0.03em; }
@@ -181,42 +143,38 @@
 
     /* ── Notes ──────────────────────────────── */
     textarea {
-      width: 100%;
-      box-sizing: border-box;
-      resize: vertical;
-      font-family: inherit;
-      font-size: 14px;
-      color: var(--text);
-      background: var(--surface);
-      border: 1px solid var(--border2);
-      border-radius: 8px;
-      padding: 12px;
-      line-height: 1.5;
+      width: 100%; box-sizing: border-box; resize: vertical; font-family: inherit; font-size: 14px;
+      color: var(--text); background: var(--surface); border: 1px solid var(--border2);
+      border-radius: 8px; padding: 12px; line-height: 1.5;
     }
     textarea:focus { outline: 2px solid rgba(42, 120, 214, 0.35); outline-offset: 1px; border-color: var(--blue); }
-
     .foot-note { font-size: 11px; color: var(--muted); margin-top: 18px; line-height: 1.6; }
 
     /* ── Desktop ────────────────────────────── */
-    @media (min-width: 640px) {
+    @media (min-width: 768px) {
       body { font-size: 15px; }
       .wrap { padding: 28px 24px 60px; }
       .title { font-size: 26px; }
-      .kpis { grid-template-columns: repeat(4, 1fr); }
+      table { min-width: 1000px; }
     }
-    @media (min-width: 768px) {
-      .chart-wrap { height: 260px; }
-    }
-    /* Hide guide columns below 768px to avoid horizontal scroll */
+    /* ── Mobile ─────────────────────────────── */
     @media (max-width: 767px) {
-      .guide-col { display: none; }
+      .top-section { grid-template-columns: 1fr; }
+      .kpis { grid-template-columns: 1fr 1fr; }
+      #map { height: 260px; }
+      table { table-layout: fixed; }
+      th, td { padding: 6px 4px; font-size: 11px; }
+      thead th { white-space: normal; }
+      .guide-col, .col-coord { display: none; }
+      .col-done { width: 30px; } .col-num { width: 18px; } .col-nights { width: 32px; }
+      .col-money { width: 58px; white-space: nowrap; } .col-del { width: 34px; }
+      .btn-del { width: 32px; height: 32px; }
     }
   </style>
 </head>
 <body>
   <div class="wrap">
 
-    <!-- Header -->
     <header class="header">
       <div>
         <div class="title">Israel trip — bar mitzvah 2027</div>
@@ -225,45 +183,40 @@
       <span id="badge" class="badge saved">Saved</span>
     </header>
 
-    <!-- KPIs -->
-    <section class="section">
+    <!-- KPIs + map -->
+    <div class="top-section">
       <div class="kpis" id="kpis"></div>
-    </section>
-
-    <!-- Chart -->
-    <section class="section">
-      <div class="section-label">Cost by category</div>
-      <div class="card">
-        <div class="legend">
-          <span class="legend-item"><span class="swatch blue"></span>Full cost</span>
-          <span class="legend-item"><span class="swatch green"></span>Optimised</span>
-        </div>
-        <div class="chart-wrap"><canvas id="chart"></canvas></div>
-      </div>
-    </section>
+      <div id="map"></div>
+    </div>
 
     <!-- Segments -->
     <section class="section">
       <div class="section-label">Itinerary &amp; segments</div>
       <div class="table-card">
-        <table>
-          <thead>
-            <tr>
-              <th class="col-done">Done</th>
-              <th>Segment</th>
-              <th class="col-nights">Nts</th>
-              <th>Hotel</th>
-              <th class="num col-money">Hotel hi</th>
-              <th class="num col-money">Hotel lo</th>
-              <th class="guide-col">Guide / tours</th>
-              <th class="num col-money guide-col">Guide hi</th>
-              <th class="num col-money guide-col">Guide lo</th>
-            </tr>
-          </thead>
-          <tbody id="segbody"></tbody>
-          <tfoot id="segfoot"></tfoot>
-        </table>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th class="col-done">Done</th>
+                <th class="col-num">#</th>
+                <th>Segment</th>
+                <th class="col-nights">Nts</th>
+                <th>Hotel</th>
+                <th class="num col-money">Hotel hi</th>
+                <th class="num col-money">Hotel lo</th>
+                <th class="guide-col">Guide / tours</th>
+                <th class="num col-money guide-col">Guide hi</th>
+                <th class="num col-money guide-col">Guide lo</th>
+                <th class="num col-coord">Lat</th>
+                <th class="num col-coord">Lng</th>
+                <th class="col-del"></th>
+              </tr>
+            </thead>
+            <tbody id="segbody"></tbody>
+          </table>
+        </div>
       </div>
+      <button class="btn-add" id="addRow">+ Add segment</button>
     </section>
 
     <!-- Category budgets -->
@@ -288,11 +241,10 @@
     /* ── Credentials (Warp's Supabase project) ─────────────────────── */
     const SUPABASE_URL  = "https://xdmhyjofbbtmjqprjsxj.supabase.co";
     const SUPABASE_ANON = "sb_publishable_w3x3Q9dPOSGQ1pVOVYnzlg_ziCNJKlI";
-
     let db = null;
     try { db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON); } catch (e) { db = null; }
 
-    /* ── Defaults (mirror the seeded row) ──────────────────────────── */
+    /* ── Defaults ──────────────────────────────────────────────────── */
     const DEFAULT_BASE = {
       flights:  { label: "Flights (4 pax)",      high: 7200, low: 5600 },
       hotels:   { label: "Hotels (15 nights)",   high: 5100, low: 4500 },
@@ -301,31 +253,28 @@
       food:     { label: "Food & incidentals",   high: 4800, low: 3600 }
     };
     const DEFAULT_SEGS = [
-      { segment: "Jerusalem",          nights: 5,    hotel: "Mamilla Hotel",         hotelHigh: 1750, hotelLow: 1600, guide: "4 days w/ car",              guideHigh: 2600, guideLow: 2600, booked: false },
-      { segment: "Bar mitzvah",        nights: null, hotel: "Included in Jerusalem", hotelHigh: 0,    hotelLow: 0,    guide: "Rabbi + photo + drummers",   guideHigh: 2500, guideLow: 1800, booked: false },
-      { segment: "Dead Sea",           nights: 2,    hotel: "Isrotel Dead Sea",      hotelHigh: 640,  hotelLow: 580,  guide: "1 day + Masada",             guideHigh: 650,  guideLow: 650,  booked: false },
-      { segment: "Negev / Ramon",      nights: 2,    hotel: "Beresheet Hotel",       hotelHigh: 700,  hotelLow: 650,  guide: "2 days: crater jeep + hike", guideHigh: 1300, guideLow: 1300, booked: false },
-      { segment: "Tel Aviv + Jaffa",   nights: 6,    hotel: "Fabric / The Norman",   hotelHigh: 1980, hotelLow: 1620, guide: "4 guided days",              guideHigh: 2600, guideLow: 1300, booked: false },
-      { segment: "Flights (4 pax)",    nights: null, hotel: "EL AL / United direct", hotelHigh: 7200, hotelLow: 5600, guide: "—",                          guideHigh: 0,    guideLow: 0,    booked: false },
-      { segment: "Food & incidentals", nights: 16,   hotel: "Mix of dining",         hotelHigh: 4800, hotelLow: 3600, guide: "—",                          guideHigh: 0,    guideLow: 0,    booked: false }
+      { segment: "Jerusalem",          nights: 5,    hotel: "Mamilla Hotel",         hotelHigh: 1750, hotelLow: 1600, guide: "4 days w/ car",              guideHigh: 2600, guideLow: 2600, booked: false, lat: 31.7683, lng: 35.2137 },
+      { segment: "Bar mitzvah",        nights: null, hotel: "Included in Jerusalem", hotelHigh: 0,    hotelLow: 0,    guide: "Rabbi + photo + drummers",   guideHigh: 2500, guideLow: 1800, booked: false, lat: 31.7767, lng: 35.2345 },
+      { segment: "Dead Sea",           nights: 2,    hotel: "Isrotel Dead Sea",      hotelHigh: 640,  hotelLow: 580,  guide: "1 day + Masada",             guideHigh: 650,  guideLow: 650,  booked: false, lat: 31.5590, lng: 35.4732 },
+      { segment: "Negev / Ramon",      nights: 2,    hotel: "Beresheet Hotel",       hotelHigh: 700,  hotelLow: 650,  guide: "2 days: crater jeep + hike", guideHigh: 1300, guideLow: 1300, booked: false, lat: 30.6083, lng: 34.8022 },
+      { segment: "Tel Aviv + Jaffa",   nights: 6,    hotel: "Fabric / The Norman",   hotelHigh: 1980, hotelLow: 1620, guide: "4 guided days",              guideHigh: 2600, guideLow: 1300, booked: false, lat: 32.0853, lng: 34.7818 },
+      { segment: "Flights (4 pax)",    nights: null, hotel: "EL AL / United direct", hotelHigh: 7200, hotelLow: 5600, guide: "—",                          guideHigh: 0,    guideLow: 0,    booked: false, lat: null,    lng: null   },
+      { segment: "Food & incidentals", nights: 16,   hotel: "Mix of dining",         hotelHigh: 4800, hotelLow: 3600, guide: "—",                          guideHigh: 0,    guideLow: 0,    booked: false, lat: null,    lng: null   }
     ];
+    /* name → coords, used to backfill v1 rows that lack lat/lng */
+    const COORDS = {};
+    DEFAULT_SEGS.forEach(s => { if (s.lat != null && s.lng != null) COORDS[s.segment] = { lat: s.lat, lng: s.lng }; });
 
-    /* Single source of truth — the debounced save always reads this. */
-    const state = {
-      base:  structuredClone(DEFAULT_BASE),
-      segs:  structuredClone(DEFAULT_SEGS),
-      notes: ""
-    };
-
-    let chart = null;
-    let saveTimer = null;
+    const state = { base: structuredClone(DEFAULT_BASE), segs: structuredClone(DEFAULT_SEGS), notes: "" };
+    let map = null, mapLayers = [], saveTimer = null;
 
     /* ── Helpers ───────────────────────────────────────────────────── */
-    const $  = (id) => document.getElementById(id);
+    const $ = (id) => document.getElementById(id);
     const money = (n) => "$" + Math.round(n || 0).toLocaleString("en-US");
-    const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
     const baseKeys = () => Object.keys(state.base);
-    const sum = (arr) => arr.reduce((a, b) => a + (Number(b) || 0), 0);
+    const sum = (a) => a.reduce((x, y) => x + (Number(y) || 0), 0);
+    const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const num = (v) => (v == null || v === "" || isNaN(v) ? null : Number(v));
 
     function setBadge(kind, msg) {
       const b = $("badge");
@@ -334,13 +283,11 @@
       b.title = kind === "error" && msg ? msg : "";
     }
 
-    /* ── Renderers ─────────────────────────────────────────────────── */
+    /* ── KPIs ──────────────────────────────────────────────────────── */
     function renderKPIs() {
-      const highs = baseKeys().map(k => state.base[k].high);
-      const lows  = baseKeys().map(k => state.base[k].low);
-      const high = sum(highs), low = sum(lows);
-      const saving = high - low;
-      const pct = high > 0 ? Math.round((saving / high) * 100) : 0;
+      const high = sum(baseKeys().map(k => state.base[k].high));
+      const low  = sum(baseKeys().map(k => state.base[k].low));
+      const saving = high - low, pct = high > 0 ? Math.round((saving / high) * 100) : 0;
       const booked = state.segs.filter(s => s.booked).length;
       $("kpis").innerHTML = `
         <div class="kpi"><div class="kpi-label">Full-cost estimate</div><div class="kpi-value blue">${money(high)}</div><div class="kpi-sub">all high values</div></div>
@@ -349,179 +296,198 @@
         <div class="kpi"><div class="kpi-label">Segments booked</div><div class="kpi-value">${booked} / ${state.segs.length}</div><div class="kpi-sub">marked done</div></div>`;
     }
 
-    function renderChart() {
-      const labels = baseKeys().map(cap);
-      const highs  = baseKeys().map(k => state.base[k].high);
-      const lows   = baseKeys().map(k => state.base[k].low);
-      if (chart) {
-        chart.data.labels = labels;
-        chart.data.datasets[0].data = highs;
-        chart.data.datasets[1].data = lows;
-        chart.update();
-        return;
-      }
-      const ctx = $("chart").getContext("2d");
-      chart = new Chart(ctx, {
-        type: "bar",
-        data: {
-          labels,
-          datasets: [
-            { label: "Full cost", data: highs, backgroundColor: "#2a78d6", borderRadius: 3, maxBarThickness: 34 },
-            { label: "Optimised", data: lows,  backgroundColor: "#1baf7a", borderRadius: 3, maxBarThickness: 34 }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => c.dataset.label + ": " + money(c.parsed.y) } } },
-          scales: {
-            x: { grid: { display: false }, ticks: { font: { size: 11 }, color: "#52514e" } },
-            y: { beginAtZero: true, grid: { color: "rgba(0,0,0,0.06)" }, ticks: { font: { size: 11 }, color: "#898781", callback: (v) => "$" + (v / 1000) + "k" } }
-          }
-        }
+    /* ── Map ───────────────────────────────────────────────────────── */
+    function initMap() {
+      if (!window.L || map) return;
+      map = L.map("map", { scrollWheelZoom: false }).setView([31.5, 34.9], 7);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>', maxZoom: 18
+      }).addTo(map);
+    }
+    function renderMap() {
+      if (!map) return;
+      mapLayers.forEach(l => map.removeLayer(l));
+      mapLayers = [];
+      const coords = [];
+      let n = 0;
+      state.segs.forEach(s => {
+        if (s.lat == null || s.lng == null || isNaN(s.lat) || isNaN(s.lng)) return;
+        n++;
+        const html = `<div style="width:28px;height:28px;border-radius:50%;background:${s.booked ? "#1baf7a" : "#2a78d6"};color:#fff;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.3);">${n}</div>`;
+        const m = L.marker([s.lat, s.lng], {
+          icon: L.divIcon({ className: "", html, iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -16] })
+        }).bindPopup(`<strong>${esc(s.segment)}</strong><br>${esc(s.hotel)}<br>${s.nights ? s.nights + " nights" : ""}<br>${s.booked ? "✅ Booked" : "⬜ Not booked yet"}`);
+        m.addTo(map); mapLayers.push(m);
+        coords.push([s.lat, s.lng]);
       });
+      if (coords.length > 1) {
+        mapLayers.push(L.polyline(coords, { color: "#2a78d6", weight: 2, dashArray: "6, 6", opacity: 0.6 }).addTo(map));
+      }
+      setTimeout(() => map.invalidateSize(), 0);
     }
 
-    function editSpan(edit, idx, key, field, val) {
-      const attrs = edit === "base"
-        ? `data-edit="base" data-key="${key}" data-field="${field}"`
-        : `data-edit="seg" data-idx="${idx}" data-field="${field}"`;
-      return `<span class="editable" ${attrs}>${money(val)}</span>`;
+    /* ── Table ─────────────────────────────────────────────────────── */
+    function cell(type, idx, field, value) {
+      const isEmpty = value == null || value === "";
+      let disp;
+      if (type === "money") disp = money(value);
+      else if (type === "nights") disp = isEmpty ? "—" : value;
+      else if (type === "coord") disp = isEmpty ? "—" : Number(value).toFixed(4);
+      else disp = isEmpty ? "—" : esc(value);
+      return `<span class="editable ${isEmpty && type !== "money" ? "empty" : ""}" data-idx="${idx}" data-field="${field}" data-type="${type}">${disp}</span>`;
     }
-
     function renderTable() {
-      $("segbody").innerHTML = state.segs.map((s, i) => `
-        <tr class="${s.booked ? "booked" : ""}">
+      const rows = state.segs.map((s, i) => `
+        <tr class="${s.booked ? "booked" : ""}" data-idx="${i}">
           <td class="col-done"><label><input type="checkbox" data-idx="${i}" ${s.booked ? "checked" : ""}></label></td>
-          <td>${s.segment}</td>
-          <td class="col-nights">${s.nights == null ? "—" : s.nights}</td>
-          <td>${s.hotel}</td>
-          <td class="num col-money">${editSpan("seg", i, null, "hotelHigh", s.hotelHigh)}</td>
-          <td class="num col-money">${editSpan("seg", i, null, "hotelLow", s.hotelLow)}</td>
-          <td class="guide-col">${s.guide}</td>
-          <td class="num col-money guide-col">${editSpan("seg", i, null, "guideHigh", s.guideHigh)}</td>
-          <td class="num col-money guide-col">${editSpan("seg", i, null, "guideLow", s.guideLow)}</td>
+          <td class="col-num">${i + 1}</td>
+          <td>${cell("text", i, "segment", s.segment)}</td>
+          <td class="col-nights num">${cell("nights", i, "nights", s.nights)}</td>
+          <td>${cell("text", i, "hotel", s.hotel)}</td>
+          <td class="num col-money">${cell("money", i, "hotelHigh", s.hotelHigh)}</td>
+          <td class="num col-money">${cell("money", i, "hotelLow", s.hotelLow)}</td>
+          <td class="guide-col">${cell("text", i, "guide", s.guide)}</td>
+          <td class="num col-money guide-col">${cell("money", i, "guideHigh", s.guideHigh)}</td>
+          <td class="num col-money guide-col">${cell("money", i, "guideLow", s.guideLow)}</td>
+          <td class="num col-coord">${cell("coord", i, "lat", s.lat)}</td>
+          <td class="num col-coord">${cell("coord", i, "lng", s.lng)}</td>
+          <td class="col-del"><button class="btn-del" data-del="${i}" title="Delete segment">×</button></td>
         </tr>`).join("");
-      const hh = sum(state.segs.map(s => s.hotelHigh));
-      const hl = sum(state.segs.map(s => s.hotelLow));
-      const gh = sum(state.segs.map(s => s.guideHigh));
-      const gl = sum(state.segs.map(s => s.guideLow));
-      $("segfoot").innerHTML = `
-        <tr>
-          <td class="col-done"></td>
-          <td>Total</td>
-          <td class="col-nights"></td>
-          <td></td>
-          <td class="num col-money">${money(hh)}</td>
-          <td class="num col-money">${money(hl)}</td>
+      const hh = sum(state.segs.map(s => s.hotelHigh)), hl = sum(state.segs.map(s => s.hotelLow));
+      const gh = sum(state.segs.map(s => s.guideHigh)), gl = sum(state.segs.map(s => s.guideLow));
+      const totals = `
+        <tr class="totals">
+          <td class="col-done"></td><td class="col-num"></td><td>Total</td><td class="col-nights"></td><td></td>
+          <td class="num col-money">${money(hh)}</td><td class="num col-money">${money(hl)}</td>
           <td class="guide-col"></td>
-          <td class="num col-money guide-col">${money(gh)}</td>
-          <td class="num col-money guide-col">${money(gl)}</td>
+          <td class="num col-money guide-col">${money(gh)}</td><td class="num col-money guide-col">${money(gl)}</td>
+          <td class="num col-coord"></td><td class="num col-coord"></td><td class="col-del"></td>
         </tr>`;
+      $("segbody").innerHTML = rows + totals;
     }
 
+    /* ── Category cards ────────────────────────────────────────────── */
+    function baseCell(key, field, value) {
+      return `<span class="editable" data-base="1" data-key="${key}" data-field="${field}" data-type="money">${money(value)}</span>`;
+    }
     function renderCats() {
       $("cats").innerHTML = baseKeys().map(k => {
         const c = state.base[k];
-        return `<div class="cat">
-          <div class="cat-name">${c.label}</div>
-          <div class="cat-row high"><span class="lbl">High</span>${editSpan("base", null, k, "high", c.high)}</div>
-          <div class="cat-row low"><span class="lbl">Low</span>${editSpan("base", null, k, "low", c.low)}</div>
-        </div>`;
+        return `<div class="cat"><div class="cat-name">${esc(c.label)}</div>
+          <div class="cat-row high"><span class="lbl">High</span>${baseCell(k, "high", c.high)}</div>
+          <div class="cat-row low"><span class="lbl">Low</span>${baseCell(k, "low", c.low)}</div></div>`;
       }).join("");
     }
 
-    function renderBaseDependent() { renderKPIs(); renderChart(); renderCats(); }
-    function renderAll() { renderBaseDependent(); renderTable(); $("notes").value = state.notes || ""; }
-
-    /* ── Editing (click-to-edit numbers) ───────────────────────────── */
-    function getVal(ds) {
-      return ds.edit === "base" ? state.base[ds.key][ds.field] : state.segs[+ds.idx][ds.field];
+    function renderAll() {
+      initMap();
+      renderKPIs(); renderMap(); renderTable(); renderCats();
+      $("notes").value = state.notes || "";
     }
-    function setVal(ds, v) {
-      if (ds.edit === "base") state.base[ds.key][ds.field] = v;
-      else state.segs[+ds.idx][ds.field] = v;
-    }
-    function rerenderFor(edit) { edit === "base" ? renderBaseDependent() : renderTable(); }
 
-    document.addEventListener("click", (e) => {
-      const span = e.target.closest(".editable");
+    /* ── Editing (click-to-edit, text + number) ────────────────────── */
+    function beginEdit(span) {
       if (!span || span.querySelector("input")) return;
-      const ds = { edit: span.dataset.edit, key: span.dataset.key, field: span.dataset.field, idx: span.dataset.idx };
+      const ds = span.dataset;
+      const isBase = ds.base === "1";
+      const type = ds.type;
+      const cur = isBase ? state.base[ds.key][ds.field] : state.segs[+ds.idx][ds.field];
       const input = document.createElement("input");
-      input.type = "number"; input.className = "edit-input"; input.min = "0"; input.value = getVal(ds);
+      input.className = "edit-input";
+      if (type === "text") { input.type = "text"; input.value = cur == null ? "" : cur; }
+      else if (type === "coord") { input.type = "number"; input.step = "0.0001"; input.value = cur == null ? "" : cur; }
+      else { input.type = "number"; input.min = "0"; input.value = cur == null ? "" : cur; }
       span.textContent = ""; span.appendChild(input);
-      input.focus(); input.select();
+      input.focus(); if (input.select) input.select();
       let cancelled = false;
       input.addEventListener("keydown", (ev) => {
         if (ev.key === "Enter") input.blur();
         else if (ev.key === "Escape") { cancelled = true; input.blur(); }
       });
       input.addEventListener("blur", () => {
-        if (!cancelled) {
-          const v = Math.max(0, Math.round(Number(input.value) || 0));
-          setVal(ds, v);
-          rerenderFor(ds.edit);
-          scheduleSave();
-        } else {
-          rerenderFor(ds.edit);
-        }
+        if (cancelled) { rerender(ds); return; }
+        const raw = input.value;
+        let v;
+        if (type === "text") v = raw.trim();
+        else if (type === "coord") v = num(raw);
+        else if (type === "nights") v = raw === "" ? null : Math.max(0, Math.round(Number(raw) || 0));
+        else v = Math.max(0, Math.round(Number(raw) || 0)); // money
+        if (isBase) state.base[ds.key][ds.field] = v;
+        else state.segs[+ds.idx][ds.field] = v;
+        rerender(ds);
+        scheduleSave();
       });
+    }
+    function rerender(ds) {
+      if (ds.base === "1") { renderKPIs(); renderCats(); }
+      else { renderTable(); renderMap(); }
+    }
+    document.addEventListener("click", (e) => {
+      const span = e.target.closest(".editable");
+      if (span) beginEdit(span);
     });
 
-    /* Checkboxes (booked) */
+    /* Checkbox (booked) */
     $("segbody").addEventListener("change", (e) => {
       const cb = e.target.closest('input[type="checkbox"]');
       if (!cb) return;
       state.segs[+cb.dataset.idx].booked = cb.checked;
-      renderTable();
-      renderKPIs();
-      scheduleSave();
+      renderTable(); renderMap(); renderKPIs(); scheduleSave();
+    });
+
+    /* Delete row */
+    $("segbody").addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-del]");
+      if (!btn) return;
+      if (!window.confirm("Delete this segment?")) return;
+      state.segs.splice(+btn.dataset.del, 1);
+      renderTable(); renderMap(); renderKPIs(); scheduleSave();
+    });
+
+    /* Add row */
+    $("addRow").addEventListener("click", () => {
+      state.segs.push({ segment: "New segment", nights: null, hotel: "", hotelHigh: 0, hotelLow: 0, guide: "", guideHigh: 0, guideLow: 0, booked: false, lat: null, lng: null });
+      renderTable(); renderMap(); renderKPIs(); scheduleSave();
+      const span = document.querySelector(`#segbody tr[data-idx="${state.segs.length - 1}"] .editable[data-field="segment"]`);
+      if (span) { span.scrollIntoView({ block: "center" }); beginEdit(span); }
     });
 
     /* Notes */
-    $("notes").addEventListener("input", (e) => {
-      state.notes = e.target.value;
-      scheduleSave();
-    });
+    $("notes").addEventListener("input", (e) => { state.notes = e.target.value; scheduleSave(); });
 
     /* ── Persistence ───────────────────────────────────────────────── */
     function scheduleSave() {
-      setBadge("saving");
-      clearTimeout(saveTimer);
-      saveTimer = setTimeout(doSave, 800);
+      setBadge("saving"); clearTimeout(saveTimer); saveTimer = setTimeout(doSave, 800);
     }
     async function doSave() {
       if (!db) { setBadge("error", "Supabase client unavailable"); return; }
       try {
         const { error } = await db.from("israel_trip").update({
-          base_costs: state.base,
-          segments: state.segs,
-          notes: state.notes,
-          updated_at: new Date().toISOString()
+          base_costs: state.base, segments: state.segs, notes: state.notes, updated_at: new Date().toISOString()
         }).eq("id", 1);
         if (error) throw error;
         setBadge("saved");
-      } catch (err) {
-        setBadge("error", err.message || String(err));
-      }
+      } catch (err) { setBadge("error", err.message || String(err)); }
     }
 
+    function withCoords(s) {
+      let lat = s.lat == null ? null : s.lat, lng = s.lng == null ? null : s.lng;
+      if ((lat == null || lng == null) && COORDS[s.segment]) { lat = COORDS[s.segment].lat; lng = COORDS[s.segment].lng; }
+      return { ...s, lat, lng };
+    }
     async function load() {
       renderAll();                 // paint defaults immediately — never blank
       if (!db) return;
       try {
-        const { data, error } = await db.from("israel_trip")
-          .select("base_costs,segments,notes").eq("id", 1).single();
+        const { data, error } = await db.from("israel_trip").select("base_costs,segments,notes").eq("id", 1).single();
         if (error) throw error;
         if (data) {
           if (data.base_costs) state.base = data.base_costs;
-          if (data.segments)   state.segs = data.segments;
+          if (Array.isArray(data.segments)) state.segs = data.segments.map(withCoords);
           state.notes = data.notes || "";
-          renderAll();             // swap in saved values once loaded
+          renderAll();
         }
       } catch (err) {
-        /* network / auth / missing table → keep defaults, page still works */
         console.warn("[trip] load kept defaults:", err.message || err);
       }
     }
