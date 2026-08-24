@@ -3,7 +3,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 // Mount point for the YouTube iframe API. Lives outside the React tree.
 const MOUNT_ID = 'yt-player-mount'
 
-export function usePlayer(tracks, shuffle) {
+export function usePlayer(tracks, shuffle, continuous) {
   const [currentTrack, setCurrentTrack] = useState(null)
   const [playing,      setPlaying]      = useState(false)
   const [progress,     setProgress]     = useState(0)
@@ -14,11 +14,13 @@ export function usePlayer(tracks, shuffle) {
   const playerRef       = useRef(null)
   const tracksRef       = useRef(tracks)
   const shuffleRef      = useRef(shuffle)
+  const continuousRef   = useRef(continuous)
   const currentTrackRef = useRef(null)
   const playingRef      = useRef(false)
 
-  useEffect(() => { tracksRef.current  = tracks  }, [tracks])
-  useEffect(() => { shuffleRef.current = shuffle }, [shuffle])
+  useEffect(() => { tracksRef.current     = tracks     }, [tracks])
+  useEffect(() => { shuffleRef.current    = shuffle    }, [shuffle])
+  useEffect(() => { continuousRef.current = continuous }, [continuous])
   useEffect(() => { playingRef.current = playing }, [playing])
   // currentTrackRef is updated synchronously in playByIndex below.
 
@@ -82,7 +84,11 @@ export function usePlayer(tracks, shuffle) {
             else if (s === 2) setPlaying(false)
             else if (s === 0) {
               setPlaying(false)
-              advance()
+              setProgress(0)
+              if (continuousRef.current) {
+                advance()
+              }
+              // If continuous is off, just stop — do nothing
             }
           },
         },
@@ -122,6 +128,23 @@ export function usePlayer(tracks, shuffle) {
     else p.playVideo?.()
   }, [])
 
+  const play = useCallback(() => {
+    playerRef.current?.playVideo?.()
+  }, [])
+
+  const pause = useCallback(() => {
+    playerRef.current?.pauseVideo?.()
+  }, [])
+
+  const stop = useCallback(() => {
+    const p = playerRef.current
+    if (!p) return
+    p.pauseVideo?.()
+    p.seekTo?.(0, true)
+    setPlaying(false)
+    setProgress(0)
+  }, [])
+
   const next = useCallback(() => advance(), [advance])
 
   const prev = useCallback(() => {
@@ -148,6 +171,6 @@ export function usePlayer(tracks, shuffle) {
 
   return {
     currentTrack, playing, progress, volume, ready,
-    playTrack, togglePlay, prev, next, seek, setVolume,
+    playTrack, togglePlay, play, pause, stop, prev, next, seek, setVolume,
   }
 }

@@ -1,8 +1,10 @@
 import { useRef } from 'react'
 
 export default function TransportBar({
-  playing, progress, shuffle, volume = 80,
-  onTogglePlay, onPrev, onNext, onSeek, onSetVolume, onToggleShuffle,
+  playing, progress, shuffle, continuous, volume = 80,
+  onTogglePlay, onPlay, onPause, onStop,
+  onPrev, onNext, onSeek,
+  onSetVolume, onToggleShuffle, onToggleContinuous,
 }) {
   const progressRef = useRef(null)
 
@@ -17,12 +19,44 @@ export default function TransportBar({
   return (
     <div className="transport">
       <button className="transport-btn" onClick={onPrev} aria-label="previous">⏮</button>
-      <button className="transport-btn" onClick={onTogglePlay} aria-label={playing ? 'pause' : 'play'}>
-        {playing ? '❚❚' : '▶'}
+
+      <button
+        className="transport-btn"
+        onClick={onPlay}
+        aria-label="play"
+        disabled={playing}
+        style={{ opacity: playing ? 0.35 : 1 }}
+      >
+        ▶
       </button>
+
+      <button
+        className="transport-btn"
+        onClick={onPause}
+        aria-label="pause"
+        disabled={!playing}
+        style={{ opacity: !playing ? 0.35 : 1 }}
+      >
+        ❚❚
+      </button>
+
+      <button
+        className="transport-btn"
+        onClick={onStop}
+        aria-label="stop"
+        title="stop and rewind"
+      >
+        ■
+      </button>
+
       <button className="transport-btn" onClick={onNext} aria-label="next">⏭</button>
 
-      <div className="progress-track" ref={progressRef} onClick={handleSeekClick}>
+      <div
+        className="progress-track"
+        ref={progressRef}
+        onClick={handleSeekClick}
+        style={{ flex: 1 }}
+      >
         <div className="progress-fill" style={{ width: `${progress}%` }} />
       </div>
 
@@ -32,7 +66,16 @@ export default function TransportBar({
         aria-label="shuffle"
         title="shuffle"
       >
-        🔀
+        ⇄
+      </button>
+
+      <button
+        className={`transport-btn${continuous ? ' active' : ''}`}
+        onClick={onToggleContinuous}
+        aria-label="continuous play"
+        title={continuous ? 'continuous play: on' : 'continuous play: off'}
+      >
+        ↻
       </button>
 
       <span style={{ color: 'var(--text-dim)', fontSize: 11 }}>🔊</span>

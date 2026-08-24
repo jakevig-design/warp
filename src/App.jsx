@@ -28,6 +28,7 @@ const INIT = {
   searchQuery:     '',
   showSyncBar:     false,
   shuffle:         false,
+  continuous:      true,  // on by default — most natural behaviour
   toast:           null,
   enriching:       false,
   enrichProgress:  0,
@@ -43,6 +44,7 @@ function reducer(state, action) {
     case 'SET_SEARCH':         return { ...state, searchQuery: action.query }
     case 'TOGGLE_SYNC_BAR':    return { ...state, showSyncBar: !state.showSyncBar }
     case 'TOGGLE_SHUFFLE':     return { ...state, shuffle: !state.shuffle }
+    case 'TOGGLE_CONTINUOUS':  return { ...state, continuous: !state.continuous }
     case 'SET_TOAST':          return { ...state, toast: action.toast }
     case 'CLEAR_TOAST':        return { ...state, toast: null }
     case 'SET_ENRICHING':      return { ...state, enriching: action.value, enrichProgress: 0 }
@@ -66,7 +68,7 @@ export default function App() {
 
   const { tracks, playlists, playlistTracks, loading, reload, patchTrack } = useLibrary(session)
   const { saveOverride, toggleStar, bulkSetField, bulkSetStarred } = useOverrides(patchTrack)
-  const player = usePlayer(tracks, state.shuffle)
+  const player = usePlayer(tracks, state.shuffle, state.continuous)
 
   const toast = useCallback((message, error = false) => {
     dispatch({ type: 'SET_TOAST', toast: { message, error } })
@@ -116,13 +118,18 @@ export default function App() {
           playing={player.playing}
           progress={player.progress}
           shuffle={state.shuffle}
+          continuous={state.continuous}
           volume={player.volume}
           onTogglePlay={player.togglePlay}
+          onPlay={player.play}
+          onPause={player.pause}
+          onStop={player.stop}
           onPrev={player.prev}
           onNext={player.next}
           onSeek={player.seek}
           onSetVolume={player.setVolume}
           onToggleShuffle={() => dispatch({ type: 'TOGGLE_SHUFFLE' })}
+          onToggleContinuous={() => dispatch({ type: 'TOGGLE_CONTINUOUS' })}
         />
 
         <TabBar activeTab={state.activeTab} onSetTab={tab => dispatch({ type: 'SET_TAB', tab })} />
