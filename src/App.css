@@ -644,6 +644,30 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 }
 .login-btn:hover { background: var(--genre-bg); }
 
+/* ── PagesNav ────────────────────────────────────────────────────────── */
+.pages-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
+  padding: 7px 12px;
+  background: var(--bg-base);
+  border-top: 1px solid var(--border-dim);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+.pages-nav-label { color: var(--text-dim); }
+.pages-nav a { color: var(--text-muted); text-decoration: none; }
+.pages-nav a:hover { color: var(--accent-bright); }
+.pages-nav.floating {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  justify-content: center;
+  background: var(--bg-panel);
+  z-index: 1;
+}
+
 /* ── Responsive ──────────────────────────────────────────────────────── */
 @media (max-width: 899px) {
   .split-side { display: none; }

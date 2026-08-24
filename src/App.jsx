@@ -12,6 +12,7 @@ import ArtistTab         from './components/ArtistTab.jsx'
 import PlaylistTab       from './components/PlaylistTab.jsx'
 import StarredTab        from './components/StarredTab.jsx'
 import StatusBar         from './components/StatusBar.jsx'
+import PagesNav          from './components/PagesNav.jsx'
 import Toast             from './components/Toast.jsx'
 import { useLibrary }    from './hooks/useLibrary.js'
 import { usePlayer }     from './hooks/usePlayer.js'
@@ -72,7 +73,7 @@ export default function App() {
   }, [])
 
   if (session === undefined) return null // loading auth
-  if (!session) return <LoginScreen />
+  if (!session) return <><LoginScreen /><PagesNav floating /></>
 
   const tabContent = {
     library:   <LibraryTab   tracks={tracks} playlists={playlists} playlistTracks={playlistTracks} state={state} dispatch={dispatch} player={player} saveOverride={saveOverride} toggleStar={toggleStar} bulkSetField={bulkSetField} bulkSetStarred={bulkSetStarred} />,
@@ -137,6 +138,8 @@ export default function App() {
           total={tracks.length}
           nowPlaying={player.currentTrack}
         />
+
+        <PagesNav />
 
       </div>
 

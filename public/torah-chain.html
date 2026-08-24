@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Chain of Torah</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Nunito:wght@400;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background: #150F24;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* ── Site nav (shared with /curriculum) ──────────────────────────────── */
+.site-nav {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  padding: 12px 16px;
+  background: #0F0A1C;
+  border-bottom: 1px solid rgba(198,155,61,0.25);
+}
+.site-nav a { color: #C69B3D; text-decoration: none; }
+.site-nav a:hover { color: #E0B85C; text-decoration: underline; }
+.site-nav a[aria-current="page"] { color: #F1E8D0; }
+
+.cot-root {
+  --velvet: #1E1830;
+  --velvet-deep: #150F24;
+  --parchment: #EFE3C4;
+  --parchment-dim: #E3D5AE;
+  --brass: #C69B3D;
+  --brass-bright: #E0B85C;
+  --garnet: #8C3A4A;
+  --ink: #2A2140;
+  --moonlight: #F1E8D0;
+
+  background: radial-gradient(ellipse at 50% -10%, #2A2248 0%, var(--velvet) 45%, var(--velvet-deep) 100%);
+  color: var(--moonlight);
+  font-family: 'Nunito', sans-serif;
+  padding: 40px 16px 80px;
+  min-height: 100%;
+  box-sizing: border-box;
+}
+.cot-root * { box-sizing: border-box; }
+
+.cot-header { text-align: center; max-width: 640px; margin: 0 auto 8px; }
+.cot-eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--brass-bright);
+  margin-bottom: 10px;
+}
+.cot-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 700;
+  font-size: clamp(34px, 6vw, 54px);
+  line-height: 1.05;
+  margin: 0 0 6px;
+  color: var(--moonlight);
+}
+.cot-title em {
+  font-style: italic;
+  color: var(--brass-bright);
+}
+.cot-sub {
+  font-size: 15px;
+  color: var(--parchment-dim);
+  line-height: 1.55;
+  margin: 0 auto 34px;
+  max-width: 480px;
+}
+
+.cot-modebar {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 48px;
+  flex-wrap: wrap;
+}
+.cot-mode-btn {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 9px 18px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(198,155,61,0.4);
+  background: rgba(255,255,255,0.03);
+  color: var(--parchment-dim);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.cot-mode-btn:hover { border-color: var(--brass-bright); color: var(--moonlight); }
+.cot-mode-btn.active {
+  background: var(--brass);
+  border-color: var(--brass);
+  color: var(--velvet-deep);
+}
+
+.cot-chain {
+  position: relative;
+  max-width: 620px;
+  margin: 0 auto;
+}
+.cot-thread {
+  position: absolute;
+  left: 27px;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  background: linear-gradient(to bottom, rgba(198,155,61,0.15), rgba(198,155,61,0.15));
+  border-radius: 3px;
+  overflow: hidden;
+}
+.cot-thread-fill {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 0%;
+  background: linear-gradient(to bottom, var(--brass-bright), var(--brass));
+  box-shadow: 0 0 12px 1px rgba(224,184,92,0.6);
+  transition: height 1.1s cubic-bezier(.22,.9,.3,1);
+  border-radius: 3px;
+}
+
+.cot-node { position: relative; padding-left: 66px; margin-bottom: 6px; }
+.cot-node.cot-side { padding-left: 66px; opacity: 0.92; }
+
+.cot-marker {
+  position: absolute;
+  left: 10px;
+  top: 6px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--velvet-deep);
+  border: 2.5px solid var(--brass);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--brass-bright);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  z-index: 2;
+}
+.cot-node.open .cot-marker,
+.cot-node.seen .cot-marker {
+  background: var(--brass);
+  color: var(--velvet-deep);
+  box-shadow: 0 0 0 5px rgba(198,155,61,0.18);
+}
+
+.cot-card {
+  background: var(--parchment);
+  color: var(--ink);
+  border-radius: 14px;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  margin-bottom: 20px;
+  transition: box-shadow 0.2s ease;
+}
+.cot-card:hover { box-shadow: 0 8px 26px rgba(0,0,0,0.32); }
+
+.cot-card-head { padding: 16px 18px; display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.cot-names { display: flex; flex-direction: column; gap: 2px; }
+.cot-heb {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px;
+  color: var(--garnet);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.cot-eng {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.15;
+}
+.cot-date {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--garnet);
+  white-space: nowrap;
+  padding-top: 4px;
+}
+.cot-oneliner {
+  font-size: 14px;
+  color: #4A3F5E;
+  padding: 0 18px 16px;
+  margin-top: -8px;
+  line-height: 1.4;
+}
+
+.cot-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+}
+.cot-node.open .cot-body { max-height: 800px; }
+
+.cot-body-inner {
+  padding: 4px 18px 20px;
+  border-top: 1px solid rgba(42,33,64,0.12);
+}
+.cot-section-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--garnet);
+  margin: 14px 0 4px;
+}
+.cot-section-label:first-child { margin-top: 16px; }
+.cot-text { font-size: 14.5px; line-height: 1.6; color: var(--ink); }
+
+.cot-personal {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: rgba(140,58,74,0.07);
+  border-left: 3px solid var(--garnet);
+  border-radius: 0 8px 8px 0;
+  font-size: 14px;
+  line-height: 1.55;
+  display: none;
+}
+.cot-root[data-mode="henry"] .cot-personal.for-henry { display: block; }
+.cot-root[data-mode="mila"] .cot-personal.for-mila { display: block; }
+.cot-root[data-mode="everyone"] .cot-personal { display: block; margin-top: 10px; }
+.cot-personal-who {
+  font-weight: 800;
+  font-family: 'Nunito', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--garnet);
+  margin-bottom: 3px;
+}
+
+.cot-footer {
+  max-width: 480px;
+  margin: 44px auto 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--parchment-dim);
+  line-height: 1.6;
+  padding-top: 24px;
+  border-top: 1px solid rgba(198,155,61,0.25);
+}
+.cot-footer b { color: var(--brass-bright); }
+
+@media (max-width: 480px) {
+  .cot-card-head { flex-direction: column; gap: 2px; }
+  .cot-eng { font-size: 21px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <a href="/">← WARP</a>
+  <a href="/torah-chain" aria-current="page">Chain of Torah</a>
+  <a href="/curriculum">Curriculum</a>
+  <a href="/trip">Israel Trip</a>
+</nav>
+
+<div class="cot-root" data-mode="everyone" id="cotRoot">
+  <div class="cot-header">
+    <div class="cot-eyebrow">A companion to the big wall poster</div>
+    <h1 class="cot-title">The Chain of <em>Torah</em></h1>
+    <p class="cot-sub">Same story as the timeline on the wall — just the thread that matters most: how one book at Sinai turned into all the books we still study today. Tap a link to open it.</p>
+  </div>
+
+  <div class="cot-modebar" id="cotModebar">
+    <button class="cot-mode-btn active" data-mode="everyone">Everyone</button>
+    <button class="cot-mode-btn" data-mode="henry">For Henry</button>
+    <button class="cot-mode-btn" data-mode="mila">For Mila</button>
+  </div>
+
+  <div class="cot-chain" id="cotChain">
+    <div class="cot-thread"><div class="cot-thread-fill" id="cotThreadFill"></div></div>
+    <div id="cotNodes"></div>
+  </div>
+
+  <div class="cot-footer">This is the chain <b>The Daily Halacha</b> is standing on top of every week &mdash; and the same chain behind <b>Pirkei Avot</b>, which opens by naming this exact hand-off, generation to generation. Everything you two study traces back up this thread.</div>
+</div>
+
+<script>
+(function(){
+  const data = [
+    {
+      id: 1,
+      heb: "תּוֹרָה",
+      eng: "The Torah",
+      date: "~1313 BCE",
+      one: "The five books of Moses. The trunk of the whole tree.",
+      what: "The written text believed given at Mount Sinai, in Hebrew, not long after the Exodus from Egypt. Everything else on this chain exists to understand, apply, or argue about what's written here — nothing on the chain ever replaces it.",
+      why: "It's the starting point, so there's no 'why it exists' — every other link exists because of it.",
+      henry: "Every debate you'll meet further down this chain is about how to <i>read</i> the Torah, never about whether to keep it. That distinction &mdash; disagreement about meaning vs. disagreement about the source &mdash; is worth holding onto for everything that follows.",
+      mila: "This is the same story your family reads out loud on the same week, every single year, for over three thousand years running. That's older than almost anything else still done exactly the same way today."
+    },
+    {
+      id: 2,
+      heb: "נְבִיאִים וּכְתוּבִים",
+      eng: "Prophets & Writings",
+      date: "finished ~450 BCE",
+      one: "Everything else in the Bible &mdash; written over centuries, then closed into one set.",
+      what: "The rest of the Hebrew Bible: the Prophets (like Shmuel and Jonah) and the Writings (like Esther and Kohelet). Written by many different people across hundreds of years, then formally gathered and closed by the Men of the Great Assembly.",
+      why: "The Torah is law and story from one moment at Sinai; these books track what happened to the Jewish people <i>afterward</i> &mdash; kings, prophets, exile, return.",
+      henry: "Your haftarah &mdash; the reading that goes with your bar mitzvah portion &mdash; comes from this section, not the Torah itself. It's Shmuel's farewell speech, paired on purpose with Korach's rebellion.",
+      mila: "The book of Jonah, read every Yom Kippur afternoon, lives right here &mdash; a story about a whole city that changes its mind."
+    },
+    {
+      id: 3,
+      heb: "מִשְׁנָה",
+      eng: "The Mishnah",
+      date: "written down ~200 CE",
+      one: "The Oral Torah, finally put in writing &mdash; organized by topic, not story.",
+      what: "For centuries, a second layer of teaching &mdash; explaining <i>how</i> to actually do what the Torah says &mdash; was passed down by memory only, teacher to student. Around 200 CE, Rabbi Yehuda HaNasi organized it all and wrote it down for the first time, in six topic-based sections.",
+      why: "The Temple had just been destroyed (70 CE) and a major revolt had just failed (135 CE). The Jewish people were being scattered, and the rabbis were afraid this entire oral half of the tradition would simply be lost with them.",
+      henry: "Pirkei Avot &mdash; the book you already learn &mdash; isn't a separate thing. It's literally one chapter tucked inside the Mishnah. You've been reading a real piece of this the whole time.",
+      mila: "This is a rescue story: people wrote it all down because they were scared of forgetting it. That fear is why you get to read it today."
+    },
+    {
+      id: 4,
+      heb: "גְּמָרָא / תַּלְמוּד",
+      eng: "The Gemara (Talmud)",
+      date: "Jerusalem ~400 CE &middot; Babylonian ~500 CE",
+      one: "Generations of rabbis arguing, line by line, about what the Mishnah actually means.",
+      what: "The Mishnah gives short rulings with no explanation. For the next 300 years, rabbis debated <i>why</i> &mdash; and those debates got written down too. Mishnah + those debates together = the Talmud. Two versions exist (Jerusalem and Babylonian); the Babylonian one is the one most people mean when they say 'the Talmud,' and it's the one Daf Yomi works through, one double-page at a time, over 7&frac12; years.",
+      why: "A ruling with no reasoning is hard to apply to a new situation. The Gemara is the reasoning.",
+      henry: "This is where the named arguments you've already heard actually live &mdash; Rabbi Eliezer vs. Rabbi Akiva on what the sukkah really commemorates, Rabbi Eliezer vs. Rabbi Yehoshua on when the world was created. Real names, real disagreement, written down on purpose instead of settled and hidden.",
+      mila: "The strange history behind Kol Nidrei traces back to arguments recorded in exactly this layer of the chain."
+    },
+    {
+      id: 5,
+      heb: "מִשְׁנֵה תוֹרָה",
+      eng: "Rambam's Code",
+      date: "~1180 CE",
+      one: "One clear answer per topic &mdash; all the centuries of debate, organized into rulings.",
+      what: "By the 1100s, the Talmud held centuries of unresolved back-and-forth &mdash; incredible to study, hard to just <i>use</i>. The Rambam (Maimonides), a philosopher and physician as well as a rabbi, wrote a code that skips the debate and states one clear ruling for almost every situation in Jewish life.",
+      why: "The Talmud answers 'what was argued.' This answers 'what do we actually do.'",
+      henry: "The stages of teshuva you worked out yourself back in Elul &mdash; regret, confession, real behavioral change &mdash; that's the Rambam's own structure, straight out of this book.",
+      mila: "Think of it as the moment someone finally wrote the answer key, after generations of just the questions."
+    },
+    {
+      id: 6,
+      heb: "שׁוּלְחָן עָרוּךְ",
+      eng: "The Shulchan Aruch",
+      date: "1563 CE (+ Ashkenazi notes ~1570s)",
+      one: "\"The Set Table\" &mdash; still the standard rulebook of Jewish law today.",
+      what: "Rabbi Yosef Karo wrote this code following Sephardic tradition. A few years later, Rabbi Moshe Isserles (\"the Rema\") added his own notes throughout, marking wherever Ashkenazi practice differs. Both traditions have sat side by side in the very same book ever since.",
+      why: "Jewish communities across different regions had already developed real differences in practice by this point &mdash; this book was the first to hold both, clearly labeled, in one place rather than picking a winner.",
+      henry: "This Sephardic-then-Ashkenazi-notes structure is exactly why <i>The Daily Halacha</i> reads the way it does &mdash; it's written in the Sephardic tradition, from this same book's original half.",
+      mila: "It's called 'the set table' because the idea was to have everything ready and laid out, no digging required &mdash; a cookbook for how to live, basically."
+    },
+    {
+      id: 7,
+      heb: "הַיּוֹם",
+      eng: "Today",
+      date: "your table",
+      one: "The chain doesn't stop at a book. It ends with whoever's still using it.",
+      what: "Every book on this chain was written because someone was afraid the last one might get lost. <i>The Daily Halacha</i> you're reading each week, the parsha Mila is starting after Simchat Torah, the haftarah Henry is learning &mdash; all of it is this exact same chain, still moving.",
+      why: "This is the only link with no fixed date, because it isn't finished.",
+      henry: "You're not just learning <i>about</i> the chain. Studying it, out loud, with someone else, is literally how the chain has always been kept going.",
+      mila: "One day, this is a story you'll get to hand to someone else &mdash; same as everyone before you did."
+    }
+  ];
+
+  const side = {
+    heb: "הַזֹּהַר",
+    eng: "The Zohar (a side branch)",
+    date: "surfaces ~1280s CE",
+    one: "The mystical branch &mdash; not law, meaning.",
+    what: "Off to the side of the legal chain sits Kabbalah &mdash; Jewish mysticism &mdash; whose central text, the Zohar, became widely known in Spain in the 1280s (traditionally attributed to the much earlier Rabbi Shimon bar Yochai). It doesn't rule on law; it looks for hidden meaning underneath it.",
+    why: "It runs alongside the main chain rather than inside it &mdash; a different question (why, spiritually) asked about the same Torah.",
+    henry: "It's a genuinely separate track from the Rambam-to-Shulchan-Aruch legal line &mdash; worth knowing it's there specifically so the two don't get tangled together.",
+    mila: "The Ushpizin custom &mdash; inviting a guest into the sukkah each night &mdash; comes from right here."
+  };
+
+  const nodesEl = document.getElementById('cotNodes');
+  const threadFill = document.getElementById('cotThreadFill');
+  let openId = null;
+  let maxSeen = 0;
+
+  function personalBlock(n) {
+    return `
+      <div class="cot-personal for-henry">
+        <div class="cot-personal-who">For Henry</div>${n.henry}
+      </div>
+      <div class="cot-personal for-mila">
+        <div class="cot-personal-who">For Mila</div>${n.mila}
+      </div>`;
+  }
+
+  function renderNode(n, isSide) {
+    const wrap = document.createElement('div');
+    wrap.className = 'cot-node' + (isSide ? ' cot-side' : '');
+    wrap.dataset.id = isSide ? 'side' : n.id;
+    wrap.innerHTML = `
+      <div class="cot-marker">${isSide ? '&#10022;' : n.id}</div>
+      <div class="cot-card">
+        <div class="cot-card-head">
+          <div class="cot-names">
+            <div class="cot-heb">${n.heb}</div>
+            <div class="cot-eng">${n.eng}</div>
+          </div>
+          <div class="cot-date">${n.date}</div>
+        </div>
+        <div class="cot-oneliner">${n.one}</div>
+        <div class="cot-body">
+          <div class="cot-body-inner">
+            <div class="cot-section-label">What it is</div>
+            <div class="cot-text">${n.what}</div>
+            <div class="cot-section-label">Why it had to exist</div>
+            <div class="cot-text">${n.why}</div>
+            ${personalBlock(n)}
+          </div>
+        </div>
+      </div>
+    `;
+    wrap.querySelector('.cot-card').addEventListener('click', () => toggle(wrap, isSide ? 'side' : n.id));
+    return wrap;
+  }
+
+  data.forEach((n, i) => {
+    nodesEl.appendChild(renderNode(n, false));
+    if (n.id === 6) nodesEl.appendChild(renderNode(side, true));
+  });
+
+  function toggle(wrap, id) {
+    const wasOpen = wrap.classList.contains('open');
+    document.querySelectorAll('.cot-node.open').forEach(el => el.classList.remove('open'));
+    if (!wasOpen) {
+      wrap.classList.add('open');
+      wrap.classList.add('seen');
+      if (typeof id === 'number') {
+        maxSeen = Math.max(maxSeen, id);
+        threadFill.style.height = Math.round((maxSeen / 7) * 100) + '%';
+      }
+      wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+
+  document.getElementById('cotModebar').addEventListener('click', (e) => {
+    const btn = e.target.closest('.cot-mode-btn');
+    if (!btn) return;
+    document.querySelectorAll('.cot-mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('cotRoot').setAttribute('data-mode', btn.dataset.mode);
+  });
+})();
+</script>
+
+</body>
+</html>

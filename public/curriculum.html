@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Family Judaic Curriculum — Fall 2026</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+  :root {
+    --ink: #26352E;
+    --paper: #FBF8F1;
+    --line: #D8CFBA;
+    --green: #3E5C4E;
+    --apricot: #D98E5F;
+    --muted: #6B7268;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    margin: 0;
+    line-height: 1.55;
+  }
+  .page {
+    max-width: 840px;
+    margin: 0 auto;
+    padding: 48px 24px 100px;
+  }
+  h1 { font-size: 30px; margin: 0 0 4px; }
+  h2 { font-size: 21px; color: var(--green); margin: 0 0 6px; border-bottom: 2px solid var(--line); padding-bottom: 8px; }
+  .subtitle { color: var(--muted); font-size: 15px; margin: 0 0 40px; }
+  .phase { margin-bottom: 52px; }
+  .source-note {
+    background: #F1ECDD;
+    border-left: 3px solid var(--apricot);
+    padding: 12px 16px;
+    border-radius: 0 6px 6px 0;
+    font-size: 14px;
+    margin: 16px 0 24px;
+  }
+  .source-note b { color: var(--green); }
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin-top: 8px; }
+  th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); padding: 8px 10px; border-bottom: 2px solid var(--line); }
+  td { padding: 12px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  .parsha-name { font-weight: 700; }
+  .parsha-heb { color: var(--muted); font-size: 13px; }
+  .date-cell { white-space: nowrap; font-variant-numeric: tabular-nums; color: var(--muted); }
+  .block { border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; margin-bottom: 12px; }
+  .block-head { font-weight: 700; color: var(--green); margin-bottom: 4px; }
+  .block-window { font-size: 12.5px; color: var(--muted); margin-bottom: 8px; }
+  .reading-tag { display: inline-block; background: #E8E1CC; color: var(--green); font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px; margin-bottom: 8px; }
+  .no-reading-tag { display: inline-block; background: transparent; color: var(--muted); font-size: 12px; font-style: italic; padding: 3px 0; margin-bottom: 8px; }
+  footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); }
+
+  /* ── Site nav (shared with /torah-chain) ───────────────────────────── */
+  .site-nav {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    padding: 12px 16px;
+    background: #F1ECDD;
+    border-bottom: 1px solid var(--line);
+  }
+  .site-nav a { color: var(--green); text-decoration: none; }
+  .site-nav a:hover { text-decoration: underline; }
+  .site-nav a[aria-current="page"] { color: var(--apricot); }
+
+  @media (max-width: 600px) {
+    .page { padding: 28px 16px 72px; }
+    h1 { font-size: 25px; }
+    h2 { font-size: 19px; }
+    table { font-size: 14px; }
+    th, td { padding: 10px 8px; }
+    .block { padding: 12px 13px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <a href="/">← WARP</a>
+  <a href="/torah-chain">Chain of Torah</a>
+  <a href="/curriculum" aria-current="page">Curriculum</a>
+  <a href="/trip">Israel Trip</a>
+</nav>
+
+<div class="page">
+  <h1 id="doc-title"></h1>
+  <p class="subtitle" id="doc-subtitle"></p>
+
+  <section class="phase" id="phase-1">
+    <h2 id="phase-1-heading"></h2>
+    <div class="source-note" id="phase-1-source"></div>
+    <div id="phase-1-blocks"></div>
+  </section>
+
+  <section class="phase" id="phase-2">
+    <h2 id="phase-2-heading"></h2>
+    <div class="source-note" id="phase-2-source"></div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Shabbat</th><th>Parsha</th><th>Core theme to bring to the session</th></tr>
+        </thead>
+        <tbody id="parsha-table-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer id="doc-footer"></footer>
+</div>
+
+<!--
+  Single source of truth for this page. The rendered view above is built from
+  this block at load time — edit the content here and nowhere else.
+-->
+<script type="application/json" id="curriculum-data">
+{
+  "title": "Family Judaic Curriculum — Fall 2026",
+  "subtitle": "Two phases, two source books. Phase 1 runs now through Simchat Torah; Phase 2 begins the following Shabbat and runs through the end of Sefer Bereishit.",
+  "phase1": {
+    "heading": "Phase 1 — High Holidays &amp; Sukkot",
+    "source": "Peninei Halakha: Laws of the Festivals (Rabbi Eliezer Melamed)",
+    "sourceScope": "General Yom Tov law, Chol Hamoed, closes with Shavuot — does not include Rosh Hashanah/Yom Kippur-specific or Sukkot-construction-specific content",
+    "sourceNote": "Source: <b>Peninei Halakha — Laws of the Festivals</b> (Rabbi Eliezer Melamed) &mdash; confirmed as the general volume rather than the narrower <i>Days of Awe</i>/<i>Sukkot</i> titles, on the reasoning that those would mostly sit unused 350 days a year for two weeks of content. It covers the general laws of Yom Tov and Chol Hamoed, and is the reading source for those sessions below. Rosh Hashanah, Yom Kippur, and the first two days of Sukkot stay conceptual rather than reading-based, using the ideas below directly rather than a matching chapter.",
+    "blocks": [
+      {
+        "title": "Elul — What actually makes a day \"Yom Tov\"?",
+        "window": "Now – Sep 10",
+        "hasReading": true,
+        "tag": "Reading: Laws of the Festivals, opening chapters on the nature of Yom Tov",
+        "body": "Use this stretch of ordinary weeks to read the book's own framing of what separates a Yom Tov day from an ordinary Shabbat &mdash; which categories of work are allowed (cooking, carrying) that aren't allowed on Shabbat, and why. This is the foundation the rest of the fall's practical halacha sits on."
+      },
+      {
+        "title": "Rosh Hashanah &amp; the Ten Days of Repentance",
+        "window": "Sep 11 – Sep 19",
+        "hasReading": false,
+        "tag": "Conceptual, not reading-based — three core ideas",
+        "body": "<b>1. Not New Year's Eve.</b> The whole point of a month of Elul beforehand is that Rosh Hashanah requires preparation — it's a day of judgment approached deliberately, not a countdown to a party. If Elul hasn't meant anything, Rosh Hashanah arrives as a surprise instead of a culmination.<br><br><b>2. Bein adam la'makom vs. bein adam la'chaveiro.</b> Teshuva splits along this line: sins between a person and God (bein adam la'makom) can be repaired directly through the teshuva process itself; sins between one person and another (bein adam la'chaveiro) are not resolved by Yom Kippur at all until you've actually gone to that person and asked forgiveness. Yom Kippur doesn't cover for what you owe another human being.<br><br><b>3. The davening replicates the Temple service.</b> The Yom Kippur machzor's Avodah section walks through what the Kohen Gadol actually did in the Temple that day — step by step. Praying it today isn't a metaphor stitched on afterward; it's a direct stand-in for a service that used to physically happen, performed by one person, once a year, in one place."
+      },
+      {
+        "title": "Yom Kippur",
+        "window": "Sep 20 – Sep 21",
+        "hasReading": false,
+        "tag": "At the table — the three ideas above are the core content",
+        "body": "The teshuva distinction and the Kohen Gadol/Avodah point above are the main content for the day itself. If there's room for more: Jonah (read Yom Kippur afternoon), Kol Nidrei's history, and the \"happiest day of the year\" question are still there as extensions, not replacements."
+      },
+      {
+        "title": "Pre-Sukkot &amp; Chol Hamoed",
+        "window": "Sep 22 – Oct 1",
+        "hasReading": true,
+        "tag": "Reading: Laws of the Festivals, general Yom Tov + Chol Hamoed chapters",
+        "body": "This is the volume's strongest direct fit for the season. Two concrete \"why\" questions to anchor the sessions:<br><br><b>Why can you cook on Yom Tov but not Shabbat?</b> The Torah (Shemot 12:16) carves out one specific exception for Yom Tov: melechet ochel nefesh — work involved in preparing food for that day. Shabbat has no such exception; all 39 categories of melacha are off-limits without exception. Yom Tov's joy is bound up with the festive meal itself, so that one category is deliberately left open — you can cook, but you still can't light a new flame from scratch, only transfer from an existing one.<br><br><b>Why is the lulav muktzeh?</b> An item whose entire purpose is a specific mitzvah — like the lulav — is treated as \"muktzeh machmat mitzvah\": set aside on account of its mitzvah use. Because its whole designated function is that one mitzvah, it isn't treated as an ordinary object you can pick up and use for anything else during the holiday.<br><br>Pair both with the existing discussion content on the Eliezer/Akiva sukkah dispute and the Four Species, which this volume doesn't cover in depth (that's the dedicated Sukkot volume)."
+      },
+      {
+        "title": "Sukkot — the same story the Seder already tells you",
+        "window": "Sep 25 – Sep 27 (at the table, no formal session)",
+        "hasReading": false,
+        "tag": "Built on the Seder they already know cold — two Seders hosted every year",
+        "body": "<b>Same phrase, both holidays.</b> Kiddush on Pesach and kiddush on Sukkot both use the words \"zecher li'yetzi'at Mitzrayim\" — remembrance of leaving Egypt. Not a coincidence or a reused line; both holidays are formally commemorating the same event.<br><br><b>Two different tools for the same memory.</b> The Haggadah remembers the Exodus in words — Maggid, sitting at a table, telling the story out loud. Sukkot remembers the same event by making you actually leave a comfortable house and live outside for a week. Ask them: why would the same event need to be remembered both ways — once in words, once by physically doing something? What does living it add that telling it doesn't?<br><br><b>Ushpizin and Eliyahu's cup.</b> Same instinct, two holidays: Sukkot reserves a nightly invitation for a symbolic guest (Ushpizin); the Seder pours a cup and opens the door for Eliyahu. Both rituals build in a seat for someone not physically at the table.<br><br><b>Why fall, not spring?</b> Sukkot is six months after Pesach, not right after it. If you built a sukkah in spring, right after the Exodus, it might just look like pleasant camping weather. Building it in autumn — moving out of a warm house on purpose, right as the weather turns — is what makes it a statement of faith and memory instead of comfort-seeking.<br><br><b>Closer, either kid:</b> If Sukkot had its own Haggadah the way Pesach does, what's the one line it would have to include?"
+      },
+      {
+        "title": "Shemini Atzeret &amp; Simchat Torah",
+        "window": "Oct 2 – Oct 4",
+        "hasReading": false,
+        "tag": "No matching reading in this volume — stay discussion-based",
+        "body": "Close out Phase 1 with the cycle-restart question already built: why the Torah reading ends and restarts in the same service."
+      }
+    ]
+  },
+  "phase2": {
+    "heading": "Phase 2 — Parshat Hashavua: Sefer Bereishit",
+    "source": "Covenant & Conversation: Genesis, The Book of Beginnings (Rabbi Jonathan Sacks)",
+    "note": "Adult-level source text; parent reads and distills for Mila's session",
+    "sourceNote": "Source: <b>Covenant &amp; Conversation: Genesis, The Book of Beginnings</b> (Rabbi Jonathan Sacks). Written for adult readers, not children &mdash; the intended use here is the same pattern as the halacha track: read the week's essay yourself, then bring Mila the theme and a question, not the text itself. Dates below assume the standard Diaspora reading schedule; check against your shul's calendar before finalizing.",
+    "parshiot": [
+      { "date": "2026-10-10", "parsha": "Bereishit", "heb": "בְּרֵאשִׁית", "theme": "Creation, and the responsibility that comes with being made \"in the image\" of something greater." },
+      { "date": "2026-10-17", "parsha": "Noach", "heb": "נֹחַ", "theme": "A flood, a covenant, and the first rules meant to apply to all of humanity, not just one family." },
+      { "date": "2026-10-24", "parsha": "Lech Lecha", "heb": "לֶךְ־לְךָ", "theme": "Leaving everything familiar on the strength of a promise with no proof yet attached." },
+      { "date": "2026-10-31", "parsha": "Vayera", "heb": "וַיֵּרָא", "theme": "Hospitality to strangers, and the hardest test in the whole book." },
+      { "date": "2026-11-07", "parsha": "Chayei Sara", "heb": "חַיֵּי שָׂרָה", "theme": "What a life adds up to, told through how it ends and who mourns it." },
+      { "date": "2026-11-14", "parsha": "Toldot", "heb": "תּוֹלְדֹת", "theme": "Sibling rivalry, and how a family's story repeats what it hasn't resolved." },
+      { "date": "2026-11-21", "parsha": "Vayetze", "heb": "וַיֵּצֵא", "theme": "Running from home, a dream of a ladder, and finding meaning while completely alone." },
+      { "date": "2026-11-28", "parsha": "Vayishlach", "heb": "וַיִּשְׁלַח", "theme": "Wrestling through the night and coming out with a new name and a limp — what does it cost to become someone else?" },
+      { "date": "2026-12-05", "parsha": "Vayeshev", "heb": "וַיֵּשֶׁב", "theme": "Favoritism, jealousy, and a dream nobody wanted to hear." },
+      { "date": "2026-12-12", "parsha": "Miketz", "heb": "מִקֵּץ", "theme": "Interpreting dreams, and how long it can take to see a plan you're already living inside. (Falls during Chanukah.)" },
+      { "date": "2026-12-19", "parsha": "Vayigash", "heb": "וַיִּגַּשׁ", "theme": "The moment a grudge finally breaks — reconciliation between brothers who had every reason not to." },
+      { "date": "2026-12-26", "parsha": "Vayechi", "heb": "וַיְחִי", "theme": "Blessings given at the end of a life, and what a father actually leaves behind." }
+    ]
+  },
+  "ongoing": {
+    "who": "Henry",
+    "note": "Henry's track continues in parallel, unchanged: haftarah/bar mitzvah prep, plus a weekly halacha reading tied to whatever that week's actual parsha is."
+  }
+}
+</script>
+
+<script>
+(function () {
+  const data = JSON.parse(document.getElementById('curriculum-data').textContent);
+
+  const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  // "2026-10-10" -> "Oct 10, 2026". Parsed by hand so no timezone shift can
+  // move a Shabbat onto the wrong day.
+  function formatDate(iso) {
+    const [y, m, d] = iso.split('-').map(Number);
+    return `${MONTHS[m - 1]} ${d}, ${y}`;
+  }
+
+  function set(id, html) {
+    document.getElementById(id).innerHTML = html;
+  }
+
+  document.title = data.title;
+  set('doc-title', data.title);
+  set('doc-subtitle', data.subtitle);
+  set('phase-1-heading', data.phase1.heading);
+  set('phase-1-source', data.phase1.sourceNote);
+  set('phase-2-heading', data.phase2.heading);
+  set('phase-2-source', data.phase2.sourceNote);
+  set('doc-footer', data.ongoing.note);
+
+  const blocksEl = document.getElementById('phase-1-blocks');
+  data.phase1.blocks.forEach(b => {
+    const el = document.createElement('div');
+    el.className = 'block';
+    el.innerHTML = `
+      <div class="block-head">${b.title}</div>
+      <div class="block-window">${b.window}</div>
+      <span class="${b.hasReading ? 'reading-tag' : 'no-reading-tag'}">${b.tag}</span>
+      <div>${b.body}</div>
+    `;
+    blocksEl.appendChild(el);
+  });
+
+  const tbody = document.getElementById('parsha-table-body');
+  data.phase2.parshiot.forEach(p => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="date-cell">${formatDate(p.date)}</td>
+      <td><span class="parsha-name">${p.parsha}</span><br><span class="parsha-heb">${p.heb}</span></td>
+      <td>${p.theme}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+})();
+</script>
+
+</body>
+</html>
