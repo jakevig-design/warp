@@ -12,7 +12,11 @@ export default function LoginScreen() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.origin,
+          // The player lives at /music now, not the site root. If Supabase's
+          // redirect allowlist rejects this path it falls back to the root —
+          // the landing page forwards the auth hash back here, so sign-in
+          // still completes either way.
+          redirectTo: `${window.location.origin}/music`,
           scopes: 'https://www.googleapis.com/auth/youtube.readonly',
           queryParams: {
             access_type: 'offline',

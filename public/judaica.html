@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Judaica — jvtestspace</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+  :root {
+    --bg:     #fdfcf9;
+    --ink:    #1a1a1a;
+    --muted:  #6b6b6b;
+    --rule:   #d8d4ca;
+    --link:   #0645ad;
+    --visited:#5a3696;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: Georgia, "Times New Roman", Times, serif;
+    font-size: 17px;
+    line-height: 1.6;
+    margin: 0;
+    padding: 56px 24px 80px;
+  }
+  .wrap { max-width: 620px; margin: 0 auto; }
+
+  .crumb {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin: 0 0 22px;
+  }
+  h1 {
+    font-size: 30px;
+    font-weight: normal;
+    letter-spacing: 0.02em;
+    margin: 0 0 4px;
+  }
+  .tagline {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 20px;
+  }
+  hr { border: 0; border-top: 1px solid var(--rule); margin: 0 0 34px; }
+
+  ul { list-style: none; margin: 0; padding: 0; }
+  li { margin: 0 0 26px; }
+  li:last-child { margin-bottom: 0; }
+
+  a { color: var(--link); }
+  a:visited { color: var(--visited); }
+  a:hover { color: #000; }
+
+  .entry-name { font-size: 19px; }
+  .entry-desc { color: var(--muted); font-size: 15px; }
+
+  footer {
+    margin-top: 48px;
+    padding-top: 16px;
+    border-top: 1px solid var(--rule);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+  }
+
+  @media (max-width: 520px) {
+    body { padding: 36px 18px 60px; font-size: 16px; }
+    h1 { font-size: 26px; }
+    .entry-name { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="crumb"><a href="/">&larr; jvtestspace</a></div>
+
+  <h1>Judaica</h1>
+  <p class="tagline">Study pages</p>
+  <hr>
+
+  <ul>
+    <li>
+      <div class="entry-name"><a href="/judaica/torah-chain">The Chain of Torah</a></div>
+      <div class="entry-desc">
+        A companion to the wall poster — the thread from Sinai through the Mishnah,
+        Talmud, Rambam and Shulchan Aruch, down to the table. Tap any link in the
+        chain to open it; there's a view for Henry and one for Mila.
+      </div>
+    </li>
+    <li>
+      <div class="entry-name"><a href="/judaica/curriculum">Family Curriculum, Fall 2026</a></div>
+      <div class="entry-desc">
+        Two phases and two source books: Peninei Halakha through Simchat Torah,
+        then Covenant &amp; Conversation week by week through Sefer Bereishit.
+      </div>
+    </li>
+  </ul>
+
+  <footer>jvtestspace.com / judaica</footer>
+
+</div>
+</body>
+</html>

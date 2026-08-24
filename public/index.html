@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>jvtestspace</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+  :root {
+    --bg:     #fdfcf9;
+    --ink:    #1a1a1a;
+    --muted:  #6b6b6b;
+    --rule:   #d8d4ca;
+    --link:   #0645ad;
+    --visited:#5a3696;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: Georgia, "Times New Roman", Times, serif;
+    font-size: 17px;
+    line-height: 1.6;
+    margin: 0;
+    padding: 56px 24px 80px;
+  }
+  .wrap { max-width: 620px; margin: 0 auto; }
+
+  h1 {
+    font-size: 30px;
+    font-weight: normal;
+    letter-spacing: 0.02em;
+    margin: 0 0 4px;
+  }
+  .tagline {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 20px;
+  }
+  hr {
+    border: 0;
+    border-top: 1px solid var(--rule);
+    margin: 0 0 34px;
+  }
+
+  h2 {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    margin: 36px 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--rule);
+  }
+  h2:first-of-type { margin-top: 0; }
+
+  ul { list-style: none; margin: 0; padding: 0; }
+  li { margin: 0 0 18px; }
+  li:last-child { margin-bottom: 0; }
+
+  a { color: var(--link); }
+  a:visited { color: var(--visited); }
+  a:hover { color: #000; }
+
+  .entry-name { font-size: 19px; }
+  .entry-desc { color: var(--muted); font-size: 15px; }
+  .note {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 1px 6px;
+    margin-left: 7px;
+    white-space: nowrap;
+  }
+
+  /* Indented children, the way an old index page nested its sub-links. */
+  .sub { margin: 10px 0 0 22px; padding-left: 14px; border-left: 2px solid var(--rule); }
+  .sub li { margin-bottom: 10px; }
+  .sub .entry-name { font-size: 17px; }
+  .sub .entry-desc { font-size: 14px; }
+
+  footer {
+    margin-top: 48px;
+    padding-top: 16px;
+    border-top: 1px solid var(--rule);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+  }
+
+  @media (max-width: 520px) {
+    body { padding: 36px 18px 60px; font-size: 16px; }
+    h1 { font-size: 26px; }
+    .entry-name { font-size: 18px; }
+    .note { display: inline-block; margin: 3px 0 0 0; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>jvtestspace</h1>
+  <p class="tagline">Jake's stuff, such as it is</p>
+  <hr>
+
+  <h2>Apps</h2>
+  <ul>
+    <li>
+      <div class="entry-name"><a href="/music">Music Player</a><span class="note">Google sign-in</span></div>
+      <div class="entry-desc">WARP — the YouTube library, with genres, artists, playlists and starred tracks.</div>
+    </li>
+    <li>
+      <div class="entry-name"><a href="https://centcom-inky.vercel.app">Centcom</a><span class="note">Google sign-in</span></div>
+      <div class="entry-desc">Command center — queue, calendar, money, and bar mitzvah planning.</div>
+    </li>
+  </ul>
+
+  <h2>Judaica</h2>
+  <ul>
+    <li>
+      <div class="entry-name"><a href="/judaica">Study pages</a></div>
+      <div class="entry-desc">What Henry and Mila are learning this fall.</div>
+      <ul class="sub">
+        <li>
+          <div class="entry-name"><a href="/judaica/torah-chain">The Chain of Torah</a></div>
+          <div class="entry-desc">How one book at Sinai became all the books we still study.</div>
+        </li>
+        <li>
+          <div class="entry-name"><a href="/judaica/curriculum">Family Curriculum, Fall 2026</a></div>
+          <div class="entry-desc">Two phases, two source books — High Holidays through Sefer Bereishit.</div>
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+  <h2>Planning</h2>
+  <ul>
+    <li>
+      <div class="entry-name"><a href="/trip">Israel Trip</a></div>
+      <div class="entry-desc">Bar mitzvah 2027 — itinerary, map, and budget.</div>
+    </li>
+  </ul>
+
+  <footer>jvtestspace.com</footer>
+
+</div>
+
+<script>
+  // Supabase OAuth returns the session in the URL hash. If its redirect
+  // allowlist ever bounces /music back to the root, hand the hash to the
+  // player rather than dropping the session on the floor.
+  if (window.location.hash.includes('access_token')) {
+    window.location.replace('/music' + window.location.hash)
+  }
+</script>
+
+</body>
+</html>

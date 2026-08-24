@@ -1,3 +1,7 @@
 {
-  "cleanUrls": true
+  "cleanUrls": true,
+  "redirects": [
+    { "source": "/torah-chain", "destination": "/judaica/torah-chain", "permanent": true },
+    { "source": "/curriculum", "destination": "/judaica/curriculum", "permanent": true }
+  ]
 }
