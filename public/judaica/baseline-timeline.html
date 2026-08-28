@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Baseline Timeline</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Nunito:wght@400;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background: #150F24;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* ── Site nav (shared with /curriculum) ──────────────────────────────── */
+.site-nav {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  padding: 12px 16px;
+  background: #0F0A1C;
+  border-bottom: 1px solid rgba(198,155,61,0.25);
+}
+.site-nav a { color: #C69B3D; text-decoration: none; }
+.site-nav a:hover { color: #E0B85C; text-decoration: underline; }
+.site-nav a[aria-current="page"] { color: #F1E8D0; }
+
+.bt-root {
+  --velvet: #1E1830;
+  --velvet-deep: #150F24;
+  --parchment: #EFE3C4;
+  --parchment-dim: #E3D5AE;
+  --brass: #C69B3D;
+  --brass-bright: #E0B85C;
+  --garnet: #8C3A4A;
+  --ink: #2A2140;
+  --moonlight: #F1E8D0;
+
+  background: radial-gradient(ellipse at 50% -10%, #2A2248 0%, var(--velvet) 45%, var(--velvet-deep) 100%);
+  color: var(--moonlight);
+  font-family: 'Nunito', sans-serif;
+  padding: 40px 16px 80px;
+  min-height: 100%;
+  box-sizing: border-box;
+}
+.bt-root * { box-sizing: border-box; }
+
+.bt-header { text-align: center; max-width: 640px; margin: 0 auto 8px; }
+.bt-eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--brass-bright);
+  margin-bottom: 10px;
+}
+.bt-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 700;
+  font-size: clamp(34px, 6vw, 54px);
+  line-height: 1.05;
+  margin: 0 0 6px;
+  color: var(--moonlight);
+}
+.bt-title em {
+  font-style: italic;
+  color: var(--brass-bright);
+}
+.bt-sub {
+  font-size: 15px;
+  color: var(--parchment-dim);
+  line-height: 1.55;
+  margin: 0 auto 48px;
+  max-width: 500px;
+}
+
+.bt-chain {
+  position: relative;
+  max-width: 620px;
+  margin: 0 auto;
+}
+.bt-thread {
+  position: absolute;
+  left: 27px;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  background: rgba(198,155,61,0.15);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.bt-thread-fill {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 0%;
+  background: linear-gradient(to bottom, var(--brass-bright), var(--brass));
+  box-shadow: 0 0 12px 1px rgba(224,184,92,0.6);
+  transition: height 0.9s cubic-bezier(.22,.9,.3,1);
+  border-radius: 3px;
+}
+
+.bt-node { position: relative; padding-left: 66px; margin-bottom: 6px; }
+
+.bt-marker {
+  position: absolute;
+  left: 10px;
+  top: 6px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--velvet-deep);
+  border: 2.5px solid var(--brass);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--brass-bright);
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+.bt-node.seen .bt-marker {
+  background: var(--brass);
+  color: var(--velvet-deep);
+  box-shadow: 0 0 0 5px rgba(198,155,61,0.18);
+}
+
+.bt-card {
+  background: var(--parchment);
+  color: var(--ink);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  margin-bottom: 20px;
+}
+
+.bt-card-head { padding: 16px 18px 10px; display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.bt-names { display: flex; flex-direction: column; gap: 2px; }
+.bt-heb {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px;
+  color: var(--garnet);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.bt-eng {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.15;
+}
+.bt-date {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--garnet);
+  white-space: nowrap;
+  padding-top: 4px;
+}
+
+.bt-body { padding: 0 18px 18px; }
+.bt-text { font-size: 14.5px; line-height: 1.6; color: var(--ink); margin: 0 0 12px; }
+.bt-text:last-child { margin-bottom: 0; }
+.bt-text a { color: var(--garnet); font-weight: 700; }
+
+.bt-ask {
+  margin: 14px 0 0;
+  padding: 11px 14px;
+  background: rgba(140,58,74,0.07);
+  border-left: 3px solid var(--garnet);
+  border-radius: 0 8px 8px 0;
+  font-size: 14px;
+  font-style: italic;
+  line-height: 1.55;
+  color: #4A3F5E;
+}
+.bt-ask + .bt-text { margin-top: 14px; }
+.bt-ask + .bt-ask { margin-top: 8px; }
+
+.bt-note {
+  margin-top: 10px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: #5B4F70;
+}
+.bt-note b {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--garnet);
+  display: block;
+  margin-bottom: 3px;
+}
+
+.bt-steps { margin: 6px 0 0; padding: 0; list-style: none; }
+.bt-steps li {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink);
+  padding: 0 0 0 15px;
+  margin-bottom: 10px;
+  border-left: 2px solid rgba(198,155,61,0.55);
+}
+.bt-steps li:last-child { margin-bottom: 0; }
+.bt-steps b { color: var(--garnet); font-weight: 800; }
+
+.bt-landing {
+  max-width: 620px;
+  margin: 34px auto 0;
+  padding: 22px 22px 24px;
+  border: 1px solid rgba(198,155,61,0.35);
+  border-radius: 16px;
+  background: rgba(255,255,255,0.03);
+}
+.bt-landing p {
+  font-size: 15.5px;
+  line-height: 1.65;
+  color: var(--parchment-dim);
+  margin: 0;
+}
+.bt-landing b { color: var(--moonlight); }
+
+.bt-pivot {
+  display: block;
+  max-width: 620px;
+  margin: 20px auto 0;
+  padding: 22px 24px;
+  border-radius: 16px;
+  background: var(--brass);
+  color: var(--velvet-deep);
+  text-decoration: none;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.28);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.bt-pivot:hover { background: var(--brass-bright); transform: translateY(-2px); }
+.bt-pivot-kicker {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  opacity: 0.75;
+}
+.bt-pivot-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(20px, 3.6vw, 26px);
+  font-weight: 700;
+  line-height: 1.25;
+}
+.bt-pivot-go {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 13px;
+  margin-top: 10px;
+}
+
+.bt-footer {
+  max-width: 480px;
+  margin: 44px auto 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--parchment-dim);
+  line-height: 1.6;
+  padding-top: 24px;
+  border-top: 1px solid rgba(198,155,61,0.25);
+}
+.bt-footer b { color: var(--brass-bright); }
+
+@media (max-width: 480px) {
+  .bt-card-head { flex-direction: column; gap: 2px; }
+  .bt-eng { font-size: 21px; }
+  .bt-node { padding-left: 56px; }
+  .bt-marker { left: 6px; }
+  .bt-thread { left: 23px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <a href="/">← jvtestspace</a>
+  <a href="/judaica">Judaica</a>
+  <a href="/judaica/baseline-timeline" aria-current="page">Baseline Timeline</a>
+  <a href="/judaica/torah-chain">Chain of Torah</a>
+  <a href="/judaica/curriculum">Curriculum</a>
+</nav>
+
+<div class="bt-root" id="btRoot">
+  <div class="bt-header">
+    <div class="bt-eyebrow">The story before the chain</div>
+    <h1 class="bt-title">The Baseline <em>Timeline</em></h1>
+    <p class="bt-sub">Creation to the Temples, in order, start to finish &mdash; the whole arc the wall poster is drawn on. Read it straight through; it ends by handing you off to the Chain of Torah.</p>
+  </div>
+
+  <div class="bt-chain" id="btChain">
+    <div class="bt-thread"><div class="bt-thread-fill" id="btThreadFill"></div></div>
+
+    <!-- 1 -->
+    <div class="bt-node">
+      <div class="bt-marker">1</div>
+      <div class="bt-card">
+        <div class="bt-card-head">
+          <div class="bt-names">
+            <div class="bt-heb">בְּרֵאשִׁית</div>
+            <div class="bt-eng">Creation</div>
+          </div>
+          <div class="bt-date">the beginning</div>
+        </div>
+        <div class="bt-body">
+          <p class="bt-text">God makes the world &mdash; light, then sky, then land, then plants and animals. People come at the very end, made on purpose and placed in charge of taking care of everything that came before them.</p>
+          <div class="bt-ask">Why do you think people come last in the story, not first?</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 -->
+    <div class="bt-node">
+      <div class="bt-marker">2</div>
+      <div class="bt-card">
+        <div class="bt-card-head">
+          <div class="bt-names">
+            <div class="bt-heb">נֹחַ</div>
+            <div class="bt-eng">Noach &amp; the Noachide Laws</div>
+          </div>
+          <div class="bt-date">covenant #1</div>
+        </div>
+        <div class="bt-body">
+          <p class="bt-text">After the flood, God makes a promise &mdash; a <i>brit</i> &mdash; never to flood the whole earth again. It comes with a short list of basic rules meant for everyone, not just Jews: don't murder, don't steal, treat animals fairly.</p>
+          <div class="bt-ask">If you could only pick a few rules that everybody in the world had to follow, what would you pick?</div>
+          <p class="bt-text">This is the first promise God makes, and it's addressed to all of humanity. Hold onto the shape of it, because the same thing happens twice more &mdash; and each time it gets more specific.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 -->
+    <div class="bt-node">
+      <div class="bt-marker">3</div>
+      <div class="bt-card">
+        <div class="bt-card-head">
+          <div class="bt-names">
+            <div class="bt-heb">אַבְרָהָם</div>
+            <div class="bt-eng">Avraham</div>
+          </div>
+          <div class="bt-date">covenant #2</div>
+        </div>
+        <div class="bt-body">
+          <p class="bt-text">Avraham looks around at a world full of idols and works out, on his own, that there's actually one God behind all of it &mdash; the first person in the story to really get that. God answers with a new promise, narrower than the last one: <i>this</i> family, specifically, is going to matter, and become a nation of its own.</p>
+          <div class="bt-ask">What do you think it felt like to be the only person who believed something everyone else thought was crazy?</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 -->
+    <div class="bt-node">
+      <div class="bt-marker">4</div>
+      <div class="bt-card">
+        <div class="bt-card-head">
+          <div class="bt-names">
+            <div class="bt-heb">אָבוֹת</div>
+            <div class="bt-eng">The Patriarchs</div>
+          </div>
+          <div class="bt-date">three generations</div>
+        </div>
+        <div class="bt-body">
+          <p class="bt-text">The promise gets handed down rather than repeated from scratch: Avraham to Yitzchak, Yitzchak to Yaakov, and Yaakov to his twelve sons &mdash; who become the twelve tribes.</p>
+          <div class="bt-ask">Why do you think the Torah spends so much time on just one family's story instead of a whole nation right away?</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5 -->
+    <div class="bt-node">
+      <div class="bt-marker">5</div>
+      <div class="bt-card">
+        <div class="bt-card-head">
+          <div class="bt-names">
+            <div class="bt-heb">אֶרֶץ כְּנַעַן</div>
+            <div class="bt-eng">The Promise of Canaan</div>
+          </div>
+          <div class="bt-date">unpaid, for now</div>
+        </div>
+        <div class="bt-body">
+          <p class="bt-text">Part of what God promised Avraham was land &mdash; this specific place, Canaan, would belong to his descendants. That part of the promise does not get paid off for a very long time.</p>
+          <div class="bt-ask">How many generations do you think pass between the promise and the family actually living there?</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6 -->
+    <div class="bt-node">
+      <div class="bt-marker">6</div>
+      <div class="bt-card">
+        <div class="bt-card-head">
+          <div class="bt-names">
+            <div class="bt-heb">יְצִיאַת מִצְרַיִם</div>
+            <div class="bt-eng">Egypt &amp; Passover</div>
+          </div>
+          <div class="bt-date">~1313 BCE</div>
+        </div>
+        <div class="bt-body">
+          <p class="bt-text">The family grows into a nation while living in Egypt &mdash; and then gets enslaved there for generations. God sends Moshe; ten plagues follow; the people go free, and the sea splits on the way out.</p>
+          <div class="bt-ask">We've now had a flood story and a sea-splitting story &mdash; what do you think water keeps showing up to represent?</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7 -->
+    <div class="bt-node">
+      <div class="bt-marker">7</div>
+      <div class="bt-card">
+        <div class="bt-card-head">
+          <div class="bt-names">
+            <div class="bt-heb">מַתַּן תּוֹרָה</div>
+            <div class="bt-eng">Wandering &amp; Sinai</div>
+          </div>
+          <div class="bt-date">covenant #3</div>
+        </div>
+        <div class="bt-body">
+          <p class="bt-text">At Sinai, God gives the Torah &mdash; and this time not to one family, but to the entire nation, all at once, out loud. It's the biggest version yet of the same pattern you've been watching: everyone, then one family, then a whole people &mdash; in a real relationship, with real terms.</p>
+          <div class="bt-ask">Why do you think God waited until after they were already free to give them the rules, instead of before?</div>
+          <p class="bt-text">This is the exact moment the <a href="/judaica/torah-chain">Chain of Torah</a> page picks up &mdash; right here, at Sinai.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8 -->
+    <div class="bt-node">
+      <div class="bt-marker">8</div>
+      <div class="bt-card">
+        <div class="bt-card-head">
+          <div class="bt-names">
+            <div class="bt-heb">מִדְבָּר</div>
+            <div class="bt-eng">The Hard Part</div>
+          </div>
+          <div class="bt-date">forty years</div>
+        </div>
+        <div class="bt-body">
+          <p class="bt-text">It does not go smoothly after that. There's a golden calf, and then a moment where the people are too frightened to enter the land they were promised &mdash; and are told they'll have to wait. Forty years of wandering follow.</p>
+          <div class="bt-ask">Is it harder to trust a promise before you've seen it come true, or after you've already seen God do the impossible and you still mess up anyway?</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9 -->
+    <div class="bt-node">
+      <div class="bt-marker">9</div>
+      <div class="bt-card">
+        <div class="bt-card-head">
+          <div class="bt-names">
+            <div class="bt-heb">מֵי מְרִיבָה</div>
+            <div class="bt-eng">Moshe's Punishment</div>
+          </div>
+          <div class="bt-date">year forty</div>
+        </div>
+        <div class="bt-body">
+          <p class="bt-text">At Mei Meriva, God tells Moshe to speak to a rock and it will give water. Instead Moshe loses his temper &mdash; "shall we bring water out of this rock for you?" &mdash; and hits it. Twice. The water comes anyway, but Moshe is told he will not be the one to lead the people into the land after all.</p>
+          <div class="bt-ask">What was the actual problem &mdash; hitting the rock instead of speaking to it, losing his temper, or making it sound like his own power rather than God's? Does it have to be just one?</div>
+          <div class="bt-note">
+            <b>Three answers</b>
+            Rashi says the miracle got downgraded &mdash; a rock that talks is a bigger sign than a rock that's hit. Rambam says the anger itself was the problem. Ramban points at the words: "shall <i>we</i> bring water" made it sound like Moshe and Aharon's own power, and said so in front of the whole nation.
+          </div>
+          <div class="bt-ask">Does the punishment feel fair? Why tell us this at all, instead of giving Moshe the ending he earned?</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10 -->
+    <div class="bt-node">
+      <div class="bt-marker">10</div>
+      <div class="bt-card">
+        <div class="bt-card-head">
+          <div class="bt-names">
+            <div class="bt-heb">יְהוֹשֻׁעַ</div>
+            <div class="bt-eng">Entering Israel</div>
+          </div>
+          <div class="bt-date">~1273 BCE</div>
+        </div>
+        <div class="bt-body">
+          <p class="bt-text">Yehoshua &mdash; Moshe's student &mdash; leads the next generation in, and the promise made to Avraham finally pays off. Moshe doesn't get to finish it himself; his student finishes it for him. That's the first link in a chain that never stops: teacher to student, generation to generation.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11 -->
+    <div class="bt-node">
+      <div class="bt-marker">11</div>
+      <div class="bt-card">
+        <div class="bt-card-head">
+          <div class="bt-names">
+            <div class="bt-heb">נְבִיאִים וּמְלָכִים</div>
+            <div class="bt-eng">Prophets &amp; Kings</div>
+          </div>
+          <div class="bt-date">~1000 BCE</div>
+        </div>
+        <div class="bt-body">
+          <p class="bt-text">The short version: judges first, then kings &mdash; Shaul, then David, then Shlomo. David wants to build a permanent home for God's presence, and Shlomo is the one who builds it: the first Temple, in Jerusalem.</p>
+          <div class="bt-ask">Why a building specifically &mdash; what does a physical place do that having the Torah alone doesn't?</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12 -->
+    <div class="bt-node">
+      <div class="bt-marker">12</div>
+      <div class="bt-card">
+        <div class="bt-card-head">
+          <div class="bt-names">
+            <div class="bt-heb">בֵּית הַמִּקְדָּשׁ</div>
+            <div class="bt-eng">The Temples</div>
+          </div>
+          <div class="bt-date">destroyed 70 CE</div>
+        </div>
+        <div class="bt-body">
+          <p class="bt-text">The first Temple is destroyed. A second one is built in its place. That one is destroyed too &mdash; by the Romans, in the year 70. There has been no Temple since.</p>
+          <div class="bt-ask">If the place where you used to feel closest to God is gone, what do you do instead?</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 13 -->
+    <div class="bt-node">
+      <div class="bt-marker">13</div>
+      <div class="bt-card">
+        <div class="bt-card-head">
+          <div class="bt-names">
+            <div class="bt-heb">עֲבוֹדָה</div>
+            <div class="bt-eng">From Korbanot to the Siddur</div>
+          </div>
+          <div class="bt-date">~350 BCE &rarr; 100 CE</div>
+        </div>
+        <div class="bt-body">
+          <p class="bt-text">Prayer was not invented after the Temple fell as a plan B. It had been running alongside the Temple for centuries already.</p>
+          <ul class="bt-steps">
+            <li><b>Ezra and the Anshei Knesset HaGedolah</b>, generations before the destruction, formalize fixed blessing texts and the Amidah &mdash; while the Second Temple is still fully operational.</li>
+            <li><b>The schedule already mirrors the Temple.</b> The twice-daily Tamid offering lines up with Shacharit and Mincha. Musaf exists on Shabbat and holidays because there was an additional korban on exactly those days.</li>
+            <li><b>70 CE.</b> As Jerusalem falls, Rabban Yochanan ben Zakkai is smuggled out of the city and sets up an academy at Yavneh, so that leadership and teaching don't die with the city. To a despairing student he answers that acts of kindness now do what the offerings did &mdash; quoting Hoshea: "I desire kindness, not sacrifice."</li>
+            <li><b>Rabban Gamliel II</b>, at Yavneh, finalizes the fixed text and order of the Amidah &mdash; locked in, in direct response to there being no Temple left.</li>
+            <li><b>Still visible today.</b> We face Jerusalem when we daven. The Retzei blessing asks God to accept "the fire-offerings of Israel" and to restore the service. Musaf quotes the Torah's sacrifice instructions word for word.</li>
+          </ul>
+          <div class="bt-ask">Was prayer a replacement for the Temple, or was it always running in parallel and simply became the whole thing once the building was gone?</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 14 -->
+    <div class="bt-node">
+      <div class="bt-marker">14</div>
+      <div class="bt-card">
+        <div class="bt-card-head">
+          <div class="bt-names">
+            <div class="bt-heb">אֲנַחְנוּ</div>
+            <div class="bt-eng">Landing the Point</div>
+          </div>
+          <div class="bt-date">your table</div>
+        </div>
+        <div class="bt-body">
+          <p class="bt-text">Creation, then a family, then a promise, then a nation. A book at Sinai, and a chain of people passing that book down. A building, and offerings twice a day inside it &mdash; with a matching prayer schedule running the whole time alongside it. A teacher who got out of a burning city and made sure none of it broke.</p>
+          <p class="bt-text">And now: us. Still standing at the same times, still facing the same direction, still asking for the same thing to come back.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <a class="bt-pivot" href="/judaica/torah-chain">
+    <div class="bt-pivot-kicker">Next &mdash; the other chain</div>
+    <div class="bt-pivot-text">That's the whole story. Now: how did that one book at Sinai actually get to us?</div>
+    <div class="bt-pivot-go">That's a different kind of chain &rarr; The Chain of Torah</div>
+  </a>
+
+  <div class="bt-footer">This is the baseline everything else sits on top of &mdash; the arc behind the wall poster, and the reason the <b>Chain of Torah</b> starts where it starts.</div>
+</div>
+
+<script>
+(function(){
+  const nodes = Array.from(document.querySelectorAll('.bt-node'));
+  const fill = document.getElementById('btThreadFill');
+  let maxSeen = 0;
+
+  function mark(node) {
+    node.classList.add('seen');
+    const n = nodes.indexOf(node) + 1;
+    if (n > maxSeen) {
+      maxSeen = n;
+      fill.style.height = Math.round((maxSeen / nodes.length) * 100) + '%';
+    }
+  }
+
+  if (!('IntersectionObserver' in window)) {
+    nodes.forEach(mark);
+    return;
+  }
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) { mark(e.target); io.unobserve(e.target); }
+    });
+  }, { rootMargin: '0px 0px -35% 0px' });
+
+  nodes.forEach(n => io.observe(n));
+})();
+</script>
+
+</body>
+</html>
