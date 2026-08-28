@@ -74,12 +74,44 @@ html, body {
   font-style: italic;
   color: var(--brass-bright);
 }
+.bt-question {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(19px, 3.2vw, 25px);
+  line-height: 1.3;
+  color: var(--brass-bright);
+  margin: 10px auto 14px;
+  max-width: 520px;
+}
 .bt-sub {
   font-size: 15px;
   color: var(--parchment-dim);
   line-height: 1.55;
-  margin: 0 auto 48px;
+  margin: 0 auto 26px;
   max-width: 500px;
+}
+
+.bt-clocks {
+  max-width: 560px;
+  margin: 0 auto 48px;
+  padding: 14px 18px;
+  border: 1px solid rgba(198,155,61,0.28);
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--parchment-dim);
+  text-align: left;
+}
+.bt-clocks b {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--brass-bright);
+  display: block;
+  margin-bottom: 6px;
 }
 
 .bt-chain {
@@ -168,7 +200,62 @@ html, body {
   padding-top: 4px;
 }
 
-.bt-body { padding: 0 18px 18px; }
+/* Dual chronology — traditional (Seder Olam) beside the historical record */
+.bt-dates {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 3px 12px;
+  margin: 8px 18px 0;
+  padding-top: 9px;
+  border-top: 1px solid rgba(42,33,64,0.10);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11.5px;
+}
+.bt-dates dt {
+  color: #7A6E90;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.bt-dates dd { margin: 0; color: var(--ink); font-weight: 600; }
+.bt-dates dd i { color: #7A6E90; font-weight: 500; font-style: normal; }
+
+.bt-body { padding: 12px 18px 18px; }
+
+/* Optional historical-context layer, collapsed by default */
+.bt-world {
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(42,33,64,0.12);
+}
+.bt-world > summary {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--garnet);
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.bt-world > summary::-webkit-details-marker { display: none; }
+.bt-world > summary::before {
+  content: '\25B8';
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+.bt-world[open] > summary::before { transform: rotate(90deg); }
+.bt-world > summary:hover { color: var(--ink); }
+.bt-world-body {
+  font-size: 13.5px;
+  line-height: 1.62;
+  color: #4A3F5E;
+  margin-top: 9px;
+}
+.bt-world-body p { margin: 0 0 9px; }
+.bt-world-body p:last-child { margin-bottom: 0; }
+.bt-world-body b { color: var(--garnet); font-weight: 700; }
 .bt-text { font-size: 14.5px; line-height: 1.6; color: var(--ink); margin: 0 0 12px; }
 .bt-text:last-child { margin-bottom: 0; }
 .bt-text a { color: var(--garnet); font-weight: 700; }
@@ -298,9 +385,15 @@ html, body {
 
 <div class="bt-root" id="btRoot">
   <div class="bt-header">
-    <div class="bt-eyebrow">The story before the chain</div>
+    <div class="bt-eyebrow">Creation &rarr; the Temples &rarr; us</div>
     <h1 class="bt-title">The Baseline <em>Timeline</em></h1>
-    <p class="bt-sub">Creation to the Temples, in order, start to finish &mdash; the whole arc the wall poster is drawn on. Read it straight through; it ends by handing you off to the Chain of Torah.</p>
+    <p class="bt-question">How did we get from Torah times to today &mdash; and what were Torah times actually like?</p>
+    <p class="bt-sub">The whole arc in order, start to finish. Every stop also opens up to show what was going on in the rest of the world at that moment. It ends by handing you off to the Chain of Torah.</p>
+  </div>
+
+  <div class="bt-clocks">
+    <b>Two clocks run down this page</b>
+    The <i>traditional</i> dates come from Seder Olam Rabbah, the rabbinic reckoning the Hebrew calendar counts from &mdash; it's why this year is 5786. The <i>historical</i> dates come from archaeology and from records other nations left behind. They line up closely from the Second Temple onward and drift further apart the further back you go; most of the gap is one disagreement, about how long the Persian period lasted. Where they differ, both are shown &mdash; the same way section 9 shows three rabbis disagreeing rather than picking one.
   </div>
 
   <div class="bt-chain" id="btChain">
@@ -317,9 +410,20 @@ html, body {
           </div>
           <div class="bt-date">the beginning</div>
         </div>
+        <dl class="bt-dates">
+          <dt>traditional</dt><dd>year 1 &mdash; 3761 BCE</dd>
+          <dt>historical</dt><dd><i>outside the datable record</i></dd>
+        </dl>
         <div class="bt-body">
           <p class="bt-text">God makes the world &mdash; light, then sky, then land, then plants and animals. People come at the very end, made on purpose and placed in charge of taking care of everything that came before them.</p>
           <div class="bt-ask">Why do you think people come last in the story, not first?</div>
+          <details class="bt-world">
+            <summary>In the world at the time</summary>
+            <div class="bt-world-body">
+              <p>This is where the Hebrew calendar starts counting, which is why the year 2026 is also the year 5786.</p>
+              <p>Other peoples in the ancient Near East told creation stories too, and Babylon's &mdash; the <b>Enuma Elish</b> &mdash; was written down long before ours was. Reading them side by side, the differences are the interesting part. In the Babylonian version the world gets made out of a dead god after a war between gods, and people are built afterward to do the gods' chores. Here there's one God, no fighting, nothing made by accident &mdash; and people arrive last on purpose, put in charge rather than put to work.</p>
+            </div>
+          </details>
         </div>
       </div>
     </div>
@@ -335,10 +439,21 @@ html, body {
           </div>
           <div class="bt-date">covenant #1</div>
         </div>
+        <dl class="bt-dates">
+          <dt>traditional</dt><dd>~2104 BCE</dd>
+          <dt>historical</dt><dd><i>no dated event; the story is everywhere</i></dd>
+        </dl>
         <div class="bt-body">
           <p class="bt-text">After the flood, God makes a promise &mdash; a <i>brit</i> &mdash; never to flood the whole earth again. It comes with a short list of basic rules meant for everyone, not just Jews: don't murder, don't steal, treat animals fairly.</p>
           <div class="bt-ask">If you could only pick a few rules that everybody in the world had to follow, what would you pick?</div>
           <p class="bt-text">This is the first promise God makes, and it's addressed to all of humanity. Hold onto the shape of it, because the same thing happens twice more &mdash; and each time it gets more specific.</p>
+          <details class="bt-world">
+            <summary>In the world at the time</summary>
+            <div class="bt-world-body">
+              <p>Flood stories turn up all over ancient Mesopotamia, and one of them is startlingly close to ours. In the <b>Epic of Gilgamesh</b>, written down centuries before, a man is warned to build a boat, seals it with pitch, loads his family and animals aboard, and afterward sends out birds to find dry land.</p>
+              <p>So the shape was familiar to anyone in that world &mdash; which makes the changes stand out. In the Gilgamesh version the gods drown everyone because people have gotten too noisy to sleep through, and one god quietly tips off his favorite. Here the flood is a moral judgment, Noach is told plainly why, and it ends with something the other stories don't have: a promise, and a set of rules meant for everyone.</p>
+            </div>
+          </details>
         </div>
       </div>
     </div>
@@ -354,9 +469,21 @@ html, body {
           </div>
           <div class="bt-date">covenant #2</div>
         </div>
+        <dl class="bt-dates">
+          <dt>traditional</dt><dd>~1813 BCE</dd>
+          <dt>historical</dt><dd>Middle Bronze Age <i>&mdash; roughly 2000&ndash;1550 BCE</i></dd>
+        </dl>
         <div class="bt-body">
           <p class="bt-text">Avraham looks around at a world full of idols and works out, on his own, that there's actually one God behind all of it &mdash; the first person in the story to really get that. God answers with a new promise, narrower than the last one: <i>this</i> family, specifically, is going to matter, and become a nation of its own.</p>
           <div class="bt-ask">What do you think it felt like to be the only person who believed something everyone else thought was crazy?</div>
+          <details class="bt-world">
+            <summary>In the world at the time</summary>
+            <div class="bt-world-body">
+              <p>Avraham starts out in <b>Ur</b>, which was a real city and has been dug up &mdash; a major place, with a stepped temple tower still standing today in southern Iraq. This is a world of Mesopotamian city-states, writing on clay, long-distance trade, and a great many gods with a great many temples.</p>
+              <p>To place it: <b>Hammurabi</b> is ruling Babylon and carving his famous law code at roughly this same moment. The Torah's most argued-over neighbor text and its first Jew are near-contemporaries.</p>
+              <p>One honest wrinkle worth knowing: the story has Avraham's family traveling with camels, and the best evidence we have puts working camels in this region considerably later. People disagree about what to make of that.</p>
+            </div>
+          </details>
         </div>
       </div>
     </div>
@@ -372,9 +499,20 @@ html, body {
           </div>
           <div class="bt-date">three generations</div>
         </div>
+        <dl class="bt-dates">
+          <dt>traditional</dt><dd>~1813&ndash;1506 BCE</dd>
+          <dt>historical</dt><dd>Middle Bronze Age</dd>
+        </dl>
         <div class="bt-body">
           <p class="bt-text">The promise gets handed down rather than repeated from scratch: Avraham to Yitzchak, Yitzchak to Yaakov, and Yaakov to his twelve sons &mdash; who become the twelve tribes.</p>
           <div class="bt-ask">Why do you think the Torah spends so much time on just one family's story instead of a whole nation right away?</div>
+          <details class="bt-world">
+            <summary>In the world at the time</summary>
+            <div class="bt-world-body">
+              <p>Clay tablets recovered from Bronze Age towns record ordinary family law, and a surprising amount of Bereishit stops looking strange once you read them. Childless couples adopting a servant as heir, then setting that aside when a son is born. Birthrights treated as property that could be traded away. Contracts about which wife's children inherit.</p>
+              <p>The best example is the oddest scene in the cycle: <b>Rachel taking Lavan's household gods</b> and hiding them under her saddle. In that world those figures could function as the deed to an inheritance &mdash; which is why Lavan tears the camp apart over statues he could presumably have replaced.</p>
+            </div>
+          </details>
         </div>
       </div>
     </div>
@@ -390,9 +528,20 @@ html, body {
           </div>
           <div class="bt-date">unpaid, for now</div>
         </div>
+        <dl class="bt-dates">
+          <dt>traditional</dt><dd>promised ~1813 BCE</dd>
+          <dt>historical</dt><dd>Canaan under Egyptian influence</dd>
+        </dl>
         <div class="bt-body">
           <p class="bt-text">Part of what God promised Avraham was land &mdash; this specific place, Canaan, would belong to his descendants. That part of the promise does not get paid off for a very long time.</p>
           <div class="bt-ask">How many generations do you think pass between the promise and the family actually living there?</div>
+          <details class="bt-world">
+            <summary>In the world at the time</summary>
+            <div class="bt-world-body">
+              <p>Canaan was not empty land waiting to be occupied. It was a patchwork of walled city-states &mdash; <b>Hazor</b>, <b>Megiddo</b>, <b>Shechem</b> &mdash; each with its own king, most of them answering in some fashion to Egypt.</p>
+              <p>We can read their mail. The <b>Amarna letters</b> are a cache of actual diplomatic correspondence from Canaanite rulers to Pharaoh, and they are mostly complaints: rivals are raiding, send troops, the roads aren't safe. It's a useful picture to hold, because it means the promised land was somebody's home, with politics and problems of its own, the entire time the promise was outstanding.</p>
+            </div>
+          </details>
         </div>
       </div>
     </div>
@@ -406,11 +555,23 @@ html, body {
             <div class="bt-heb">יְצִיאַת מִצְרַיִם</div>
             <div class="bt-eng">Egypt &amp; Passover</div>
           </div>
-          <div class="bt-date">~1313 BCE</div>
+          <div class="bt-date">slavery &rarr; freedom</div>
         </div>
+        <dl class="bt-dates">
+          <dt>traditional</dt><dd>~1313 BCE</dd>
+          <dt>historical</dt><dd>~1250 BCE <i>&mdash; Ramesses II, 19th dynasty</i></dd>
+        </dl>
         <div class="bt-body">
           <p class="bt-text">The family grows into a nation while living in Egypt &mdash; and then gets enslaved there for generations. God sends Moshe; ten plagues follow; the people go free, and the sea splits on the way out.</p>
           <div class="bt-ask">We've now had a flood story and a sea-splitting story &mdash; what do you think water keeps showing up to represent?</div>
+          <details class="bt-world">
+            <summary>In the world at the time</summary>
+            <div class="bt-world-body">
+              <p>Egypt is at the height of its power, and it doesn't only rule Egypt &mdash; it rules Canaan too. That's the detail most people miss: walking out of Egypt toward the promised land did not mean walking out of Egyptian reach.</p>
+              <p>Semitic-speaking people really did settle in the eastern Nile delta, exactly where the Torah puts them, and one of the store cities named in Shemot &mdash; <b>Ra'amses</b> &mdash; matches Pi-Ramesses, the real capital Ramesses II built there.</p>
+              <p>No Egyptian record of the Exodus has been found. That's less damning than it sounds, since Egyptian royal inscriptions were monuments, not journals, and they simply didn't record defeats. What we do have is the <b>Merneptah Stele</b> from about 1208 BCE, an Egyptian victory boast that lists the peoples Pharaoh crushed &mdash; and one of the names on it is <b>Israel</b>, already a people, already in Canaan. It's the oldest mention of us outside our own book.</p>
+            </div>
+          </details>
         </div>
       </div>
     </div>
@@ -426,9 +587,21 @@ html, body {
           </div>
           <div class="bt-date">covenant #3</div>
         </div>
+        <dl class="bt-dates">
+          <dt>traditional</dt><dd>~1313 BCE</dd>
+          <dt>historical</dt><dd>~1250 BCE <i>&mdash; Late Bronze Age</i></dd>
+        </dl>
         <div class="bt-body">
           <p class="bt-text">At Sinai, God gives the Torah &mdash; and this time not to one family, but to the entire nation, all at once, out loud. It's the biggest version yet of the same pattern you've been watching: everyone, then one family, then a whole people &mdash; in a real relationship, with real terms.</p>
           <div class="bt-ask">Why do you think God waited until after they were already free to give them the rules, instead of before?</div>
+          <details class="bt-world">
+            <summary>In the world at the time</summary>
+            <div class="bt-world-body">
+              <p>There's nothing to dig up from a camp in the desert, so archaeology has little to say here directly. But the <i>shape</i> of what happens at Sinai has a striking parallel.</p>
+              <p>In exactly this era, the <b>Hittite empire</b> wrote treaties between a great king and a people under his protection, and they follow a fixed format: the king names himself, recounts what he has already done for them, sets out the terms, calls witnesses, then lists the blessings for keeping it and the curses for breaking it.</p>
+              <p>That is, beat for beat, the structure of the covenant at Sinai &mdash; right down to opening with "I am the Lord your God, who brought you out of the land of Egypt" before a single rule is given. Whatever else you conclude, the covenant is written in the legal language of its own century, and it does something no Hittite treaty does: the whole people, not just the king, hears the terms and agrees to them.</p>
+            </div>
+          </details>
           <p class="bt-text">This is the exact moment the <a href="/judaica/torah-chain">Chain of Torah</a> page picks up &mdash; right here, at Sinai.</p>
         </div>
       </div>
@@ -445,9 +618,20 @@ html, body {
           </div>
           <div class="bt-date">forty years</div>
         </div>
+        <dl class="bt-dates">
+          <dt>traditional</dt><dd>1313&ndash;1273 BCE</dd>
+          <dt>historical</dt><dd>Late Bronze Age Sinai</dd>
+        </dl>
         <div class="bt-body">
           <p class="bt-text">It does not go smoothly after that. There's a golden calf, and then a moment where the people are too frightened to enter the land they were promised &mdash; and are told they'll have to wait. Forty years of wandering follow.</p>
           <div class="bt-ask">Is it harder to trust a promise before you've seen it come true, or after you've already seen God do the impossible and you still mess up anyway?</div>
+          <details class="bt-world">
+            <summary>In the world at the time</summary>
+            <div class="bt-world-body">
+              <p>The Sinai wasn't empty wilderness. Egypt ran mining operations there for turquoise and copper, worked in large part by Semitic laborers &mdash; and at one of those mining camps, <b>Serabit el-Khadim</b>, something remarkable turned up scratched into the rock.</p>
+              <p>Those workers had taken Egyptian picture-signs and repurposed them to write their own Semitic language, one sign per sound. It's among the earliest alphabetic writing anyone has found. The alphabet these pages are printed in traces back through Greek and Phoenician to marks like those &mdash; made by Semitic workers in the Sinai, in roughly this era.</p>
+            </div>
+          </details>
         </div>
       </div>
     </div>
@@ -461,8 +645,12 @@ html, body {
             <div class="bt-heb">מֵי מְרִיבָה</div>
             <div class="bt-eng">Moshe's Punishment</div>
           </div>
-          <div class="bt-date">year forty</div>
+          <div class="bt-date">the cost</div>
         </div>
+        <dl class="bt-dates">
+          <dt>traditional</dt><dd>~1273 BCE <i>&mdash; year forty</i></dd>
+          <dt>historical</dt><dd>Kadesh Barnea, northeastern Sinai</dd>
+        </dl>
         <div class="bt-body">
           <p class="bt-text">At Mei Meriva, God tells Moshe to speak to a rock and it will give water. Instead Moshe loses his temper &mdash; "shall we bring water out of this rock for you?" &mdash; and hits it. Twice. The water comes anyway, but Moshe is told he will not be the one to lead the people into the land after all.</p>
           <div class="bt-ask">What was the actual problem &mdash; hitting the rock instead of speaking to it, losing his temper, or making it sound like his own power rather than God's? Does it have to be just one?</div>
@@ -471,6 +659,13 @@ html, body {
             Rashi says the miracle got downgraded &mdash; a rock that talks is a bigger sign than a rock that's hit. Rambam says the anger itself was the problem. Ramban points at the words: "shall <i>we</i> bring water" made it sound like Moshe and Aharon's own power, and said so in front of the whole nation.
           </div>
           <div class="bt-ask">Does the punishment feel fair? Why tell us this at all, instead of giving Moshe the ending he earned?</div>
+          <details class="bt-world">
+            <summary>In the world at the time</summary>
+            <div class="bt-world-body">
+              <p><b>Kadesh Barnea</b> is a real oasis in the northeastern Sinai, and the surrounding territories the Torah names &mdash; Edom, Moab &mdash; are real places with real borders that had to be negotiated or gone around.</p>
+              <p>Which is worth knowing before deciding the story is about a temper tantrum. In this landscape water was not a convenience, it was the difference between a nation surviving the season and not. Control of a spring was the kind of thing neighboring peoples went to war over. A quarrel about water in that country is a quarrel about whether everyone lives.</p>
+            </div>
+          </details>
         </div>
       </div>
     </div>
@@ -484,10 +679,22 @@ html, body {
             <div class="bt-heb">יְהוֹשֻׁעַ</div>
             <div class="bt-eng">Entering Israel</div>
           </div>
-          <div class="bt-date">~1273 BCE</div>
+          <div class="bt-date">the promise paid</div>
         </div>
+        <dl class="bt-dates">
+          <dt>traditional</dt><dd>~1273 BCE</dd>
+          <dt>historical</dt><dd>~1200 BCE <i>&mdash; Iron Age I begins</i></dd>
+        </dl>
         <div class="bt-body">
           <p class="bt-text">Yehoshua &mdash; Moshe's student &mdash; leads the next generation in, and the promise made to Avraham finally pays off. Moshe doesn't get to finish it himself; his student finishes it for him. That's the first link in a chain that never stops: teacher to student, generation to generation.</p>
+          <details class="bt-world">
+            <summary>In the world at the time</summary>
+            <div class="bt-world-body">
+              <p>This is one of the most dramatic moments in ancient history and it has nothing to do with us. Around 1200 BCE the entire Bronze Age world <b>collapses</b> &mdash; within about fifty years the Hittite empire falls, Greek palace civilization ends, trade routes fail, cities burn all over the eastern Mediterranean, and Egypt shrinks back inside its own borders. Displaced peoples move by sea; one group settles the coast and becomes the <b>Philistines</b>.</p>
+              <p>Into that vacuum, something new shows up in the archaeology: hundreds of small villages appear in the central highlands, unwalled, poor, farming terraces. They have no palaces and no temples &mdash; and almost no pig bones, which stands out sharply against every neighboring site. That's the point at which Israel becomes visible in the ground.</p>
+              <p>How it happened is genuinely argued over: a military conquest, a gradual settling, or people already living in Canaan reorganizing into something new. What isn't argued is that the highland villages are there, and that a people called Israel is in Canaan by 1208 BCE, because Egypt says so on the Merneptah Stele.</p>
+            </div>
+          </details>
         </div>
       </div>
     </div>
@@ -501,11 +708,23 @@ html, body {
             <div class="bt-heb">נְבִיאִים וּמְלָכִים</div>
             <div class="bt-eng">Prophets &amp; Kings</div>
           </div>
-          <div class="bt-date">~1000 BCE</div>
+          <div class="bt-date">judges &rarr; kings</div>
         </div>
+        <dl class="bt-dates">
+          <dt>traditional</dt><dd>David ~877 BCE <i>&middot; Temple built ~832 BCE</i></dd>
+          <dt>historical</dt><dd>David ~1010 BCE <i>&middot; Temple built ~960 BCE</i></dd>
+        </dl>
         <div class="bt-body">
           <p class="bt-text">The short version: judges first, then kings &mdash; Shaul, then David, then Shlomo. David wants to build a permanent home for God's presence, and Shlomo is the one who builds it: the first Temple, in Jerusalem.</p>
           <div class="bt-ask">Why a building specifically &mdash; what does a physical place do that having the Torah alone doesn't?</div>
+          <details class="bt-world">
+            <summary>In the world at the time</summary>
+            <div class="bt-world-body">
+              <p>This is where the story starts leaving fingerprints outside itself. In 1993 excavators at <b>Tel Dan</b> found a broken victory monument put up by an enemy king, boasting in Aramaic about defeating the kings of Israel and of the <b>House of David</b>. It dates to roughly 840 BCE &mdash; within a couple of centuries of David himself, and the first mention of him anywhere outside the Bible.</p>
+              <p>What's still argued is the scale. Jerusalem in this period was not a large city by the standards of Egypt or Assyria, and archaeologists disagree sharply about how big and how organized the united kingdom really was. The disagreement is about size, not existence.</p>
+              <p>Notice too how far apart the two clocks have drifted by now &mdash; about 130 years on David alone. That gap keeps widening until the next stop, where it gets resolved.</p>
+            </div>
+          </details>
         </div>
       </div>
     </div>
@@ -519,11 +738,23 @@ html, body {
             <div class="bt-heb">בֵּית הַמִּקְדָּשׁ</div>
             <div class="bt-eng">The Temples</div>
           </div>
-          <div class="bt-date">destroyed 70 CE</div>
+          <div class="bt-date">two buildings, both gone</div>
         </div>
+        <dl class="bt-dates">
+          <dt>traditional</dt><dd>First 423 BCE <i>&middot;</i> Second 68 CE</dd>
+          <dt>historical</dt><dd>First 586 BCE <i>&middot;</i> Second 70 CE</dd>
+        </dl>
         <div class="bt-body">
           <p class="bt-text">The first Temple is destroyed. A second one is built in its place. That one is destroyed too &mdash; by the Romans, in the year 70. There has been no Temple since.</p>
           <div class="bt-ask">If the place where you used to feel closest to God is gone, what do you do instead?</div>
+          <details class="bt-world">
+            <summary>In the world at the time</summary>
+            <div class="bt-world-body">
+              <p><b>This is where the two clocks split the widest &mdash; and then snap back together.</b> The traditional reckoning puts the First Temple's destruction at 423 BCE; Babylonian records, which can be checked against dated astronomical observations, put it at 586 BCE. Nearly the whole difference is one disagreement about how long the Persian empire ruled before Alexander. From the Second Temple onward the two clocks agree.</p>
+              <p>The first destruction is well documented from the other side: Babylonian chronicles record Nebuchadnezzar taking Jerusalem, and the <b>Lachish letters</b> are actual military dispatches written on pottery during the final weeks, one of them reporting that the signal fires of a neighboring city can no longer be seen.</p>
+              <p>For the second, the monument is still standing. The <b>Arch of Titus</b> in Rome was built to celebrate the victory, and carved on its inner wall is a parade of Roman soldiers carrying the Temple's menorah away. You can go look at it.</p>
+            </div>
+          </details>
         </div>
       </div>
     </div>
@@ -537,8 +768,12 @@ html, body {
             <div class="bt-heb">עֲבוֹדָה</div>
             <div class="bt-eng">From Korbanot to the Siddur</div>
           </div>
-          <div class="bt-date">~350 BCE &rarr; 100 CE</div>
+          <div class="bt-date">the service continues</div>
         </div>
+        <dl class="bt-dates">
+          <dt>traditional</dt><dd>Ezra ~350 BCE <i>&rarr;</i> Yavneh ~100 CE</dd>
+          <dt>historical</dt><dd>Ezra ~450 BCE <i>&rarr;</i> Yavneh ~100 CE</dd>
+        </dl>
         <div class="bt-body">
           <p class="bt-text">Prayer was not invented after the Temple fell as a plan B. It had been running alongside the Temple for centuries already.</p>
           <ul class="bt-steps">
@@ -549,6 +784,14 @@ html, body {
             <li><b>Still visible today.</b> We face Jerusalem when we daven. The Retzei blessing asks God to accept "the fire-offerings of Israel" and to restore the service. Musaf quotes the Torah's sacrifice instructions word for word.</li>
           </ul>
           <div class="bt-ask">Was prayer a replacement for the Temple, or was it always running in parallel and simply became the whole thing once the building was gone?</div>
+          <details class="bt-world">
+            <summary>In the world at the time</summary>
+            <div class="bt-world-body">
+              <p>There's outside evidence for the claim this section makes. Among the <b>Dead Sea Scrolls</b>, hidden away before 70 CE, are collections of fixed prayers for set times &mdash; written while the Temple was still standing and its offerings were still being brought. Prayer at appointed hours was demonstrably already in use, not invented afterward.</p>
+              <p>We also have an eyewitness to the fall itself. <b>Josephus</b> was a Jewish commander who ended up in Roman hands and wrote a long account of the war, including the siege and the burning of the Temple. He is not a neutral narrator &mdash; he was writing under Roman patronage &mdash; but he was there.</p>
+              <p>And the rebuilding at Yavneh happened against a brutal backdrop. Sixty years later the <b>Bar Kokhba revolt</b> was crushed, Judea was devastated, and Jerusalem was refounded as a Roman city Jews were barred from entering. The academy Rabban Yochanan ben Zakkai talked his way out of the city to found is the reason there was still a tradition to carry after all of that.</p>
+            </div>
+          </details>
         </div>
       </div>
     </div>
@@ -564,6 +807,10 @@ html, body {
           </div>
           <div class="bt-date">your table</div>
         </div>
+        <dl class="bt-dates">
+          <dt>traditional</dt><dd>5786</dd>
+          <dt>historical</dt><dd>2026 <i>&mdash; same moment, both clocks</i></dd>
+        </dl>
         <div class="bt-body">
           <p class="bt-text">Creation, then a family, then a promise, then a nation. A book at Sinai, and a chain of people passing that book down. A building, and offerings twice a day inside it &mdash; with a matching prayer schedule running the whole time alongside it. A teacher who got out of a burning city and made sure none of it broke.</p>
           <p class="bt-text">And now: us. Still standing at the same times, still facing the same direction, still asking for the same thing to come back.</p>
