@@ -274,6 +274,30 @@ html, body {
 .bt-ask + .bt-text { margin-top: 14px; }
 .bt-ask + .bt-ask { margin-top: 8px; }
 
+/* "You've already heard this" callouts — brass, deliberately distinct from
+   the garnet discussion questions above. */
+.bt-heard {
+  margin: 15px 0 0;
+  padding: 13px 15px 14px;
+  background: linear-gradient(to right, rgba(198,155,61,0.17), rgba(198,155,61,0.05));
+  border: 1px solid rgba(198,155,61,0.42);
+  border-left: 4px solid var(--brass);
+  border-radius: 0 10px 10px 0;
+}
+.bt-heard b {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #8A6A1E;
+  display: block;
+  margin-bottom: 5px;
+}
+.bt-heard p { font-size: 14px; line-height: 1.6; color: var(--ink); margin: 0 0 9px; }
+.bt-heard p:last-child { margin-bottom: 0; }
+.bt-heard q { font-style: italic; color: #5B4715; quotes: '\201C' '\201D'; }
+.bt-heard + .bt-text, .bt-heard + .bt-ask { margin-top: 15px; }
+
 .bt-note {
   margin-top: 10px;
   font-size: 13px;
@@ -331,6 +355,7 @@ html, body {
   transition: background 0.2s ease, transform 0.2s ease;
 }
 .bt-pivot:hover { background: var(--brass-bright); transform: translateY(-2px); }
+.bt-pivot-inline { max-width: none; margin: 2px 0 26px 66px; }
 .bt-pivot-kicker {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 11px;
@@ -370,6 +395,7 @@ html, body {
   .bt-node { padding-left: 56px; }
   .bt-marker { left: 6px; }
   .bt-thread { left: 23px; }
+  .bt-pivot-inline { margin-left: 56px; }
 }
 </style>
 </head>
@@ -417,6 +443,10 @@ html, body {
         <div class="bt-body">
           <p class="bt-text">God makes the world &mdash; light, then sky, then land, then plants and animals. People come at the very end, made on purpose and placed in charge of taking care of everything that came before them.</p>
           <div class="bt-ask">Why do you think people come last in the story, not first?</div>
+          <div class="bt-heard">
+            <b>You&rsquo;ve already heard this</b>
+            <p>Vayechulu &mdash; the paragraph sung at Friday night Kiddush, and again on Shabbat morning &mdash; is word for word the last few lines of this story, straight out of Bereishit. That tune you already know from the Kiddush cup isn't a poem written <i>about</i> Creation. It's the closing lines of the account itself.</p>
+          </div>
           <details class="bt-world">
             <summary>In the world at the time</summary>
             <div class="bt-world-body">
@@ -474,7 +504,7 @@ html, body {
           <dt>historical</dt><dd>Middle Bronze Age <i>&mdash; roughly 2000&ndash;1550 BCE</i></dd>
         </dl>
         <div class="bt-body">
-          <p class="bt-text">Avraham looks around at a world full of idols and works out, on his own, that there's actually one God behind all of it &mdash; the first person in the story to really get that. God answers with a new promise, narrower than the last one: <i>this</i> family, specifically, is going to matter, and become a nation of its own.</p>
+          <p class="bt-text">Avraham looks around at a world full of idols and works out, on his own, that there's actually one God behind all of it &mdash; the first person in the story to really get that. God answers with a new promise, narrower than the last one: <i>this</i> family, specifically, is going to matter, is going to be blessed, and is going to become a nation of its own.</p>
           <div class="bt-ask">What do you think it felt like to be the only person who believed something everyone else thought was crazy?</div>
           <details class="bt-world">
             <summary>In the world at the time</summary>
@@ -506,6 +536,10 @@ html, body {
         <div class="bt-body">
           <p class="bt-text">The promise gets handed down rather than repeated from scratch: Avraham to Yitzchak, Yitzchak to Yaakov, and Yaakov to his twelve sons &mdash; who become the twelve tribes.</p>
           <div class="bt-ask">Why do you think the Torah spends so much time on just one family's story instead of a whole nation right away?</div>
+          <div class="bt-heard">
+            <b>You&rsquo;ve already heard this</b>
+            <p>The very first line of the Amidah &mdash; the prayer where everyone at shul stands up and goes quiet &mdash; names these three, in this order: <i>Elokei Avraham, Elokei Yitzchak, v'Elokei Yaakov</i>. Every time anyone davens the Amidah, anywhere in the world, those three names come first, before anything is asked for. You've watched a room stand silently for that. This is who they're standing for.</p>
+          </div>
           <details class="bt-world">
             <summary>In the world at the time</summary>
             <div class="bt-world-body">
@@ -564,6 +598,10 @@ html, body {
         <div class="bt-body">
           <p class="bt-text">The family grows into a nation while living in Egypt &mdash; and then gets enslaved there for generations. God sends Moshe; ten plagues follow; the people go free, and the sea splits on the way out.</p>
           <div class="bt-ask">We've now had a flood story and a sea-splitting story &mdash; what do you think water keeps showing up to represent?</div>
+          <div class="bt-heard">
+            <b>You&rsquo;ve already heard this</b>
+            <p>The third paragraph of the Shema ends by naming Yetziat Mitzrayim, the going-out from Egypt, outright. It gets said twice a day, every day &mdash; not once a year at the Seder.</p>
+          </div>
           <details class="bt-world">
             <summary>In the world at the time</summary>
             <div class="bt-world-body">
@@ -594,6 +632,11 @@ html, body {
         <div class="bt-body">
           <p class="bt-text">At Sinai, God gives the Torah &mdash; and this time not to one family, but to the entire nation, all at once, out loud. It's the biggest version yet of the same pattern you've been watching: everyone, then one family, then a whole people &mdash; in a real relationship, with real terms.</p>
           <div class="bt-ask">Why do you think God waited until after they were already free to give them the rules, instead of before?</div>
+          <p class="bt-text">This is the exact moment the <a href="/judaica/torah-chain">Chain of Torah</a> page picks up &mdash; right here, at Sinai. Everything after this point is that same book being handed down, teacher to student, generation to generation, until it reaches us.</p>
+          <div class="bt-heard">
+            <b>You&rsquo;ve already heard this</b>
+            <p>Shema &mdash; the line you probably half know already, said out loud at shul, sometimes with a tune &mdash; isn't just a nice sentence about God being one. It is the actual content of what's being accepted at this exact moment, on this mountain. Every time you say it, you're doing a smaller, quieter version of what an entire nation did right here, out loud, together.</p>
+          </div>
           <details class="bt-world">
             <summary>In the world at the time</summary>
             <div class="bt-world-body">
@@ -602,7 +645,6 @@ html, body {
               <p>That is, beat for beat, the structure of the covenant at Sinai &mdash; right down to opening with "I am the Lord your God, who brought you out of the land of Egypt" before a single rule is given. Whatever else you conclude, the covenant is written in the legal language of its own century, and it does something no Hittite treaty does: the whole people, not just the king, hears the terms and agrees to them.</p>
             </div>
           </details>
-          <p class="bt-text">This is the exact moment the <a href="/judaica/torah-chain">Chain of Torah</a> page picks up &mdash; right here, at Sinai.</p>
         </div>
       </div>
     </div>
@@ -642,6 +684,41 @@ html, body {
       <div class="bt-card">
         <div class="bt-card-head">
           <div class="bt-names">
+            <div class="bt-heb">מִשְׁכָּן</div>
+            <div class="bt-eng">The Mishkan</div>
+          </div>
+          <div class="bt-date">a home that travels</div>
+        </div>
+        <dl class="bt-dates">
+          <dt>traditional</dt><dd>~1312 BCE <i>&mdash; the year after Sinai</i></dd>
+          <dt>historical</dt><dd>Late Bronze Age <i>&mdash; a tent leaves nothing to dig up</i></dd>
+        </dl>
+        <div class="bt-body">
+          <p class="bt-text">Right after the golden calf &mdash; the worst moment of broken trust in the whole story &mdash; God does not walk away. The instruction to Moshe is the opposite: build Me a sanctuary, so that I can dwell among them. It isn't a punishment or a patch. It's a repair, and it moves in the direction nobody would expect: not more distance, but a tent pitched in the middle of the camp.</p>
+          <p class="bt-text">This is the Mishkan, and it's portable by design &mdash; built out of materials the people themselves donated, taken apart and reassembled every single time the nation moves. Inside stand the Aron, the Ark holding the tablets from Sinai, along with a menorah and an incense altar; outside in the courtyard is the altar where the korbanot, the offerings, are brought. Aharon becomes the first Kohen Gadol. And for the first time there is a real, ongoing <i>daily</i> service &mdash; offerings every morning and every evening, on a fixed schedule, rather than one-off sacrifices whenever someone feels moved to bring one.</p>
+          <div class="bt-ask">Why would God want a portable house, instead of waiting until they're settled in the land to build something permanent?</div>
+          <p class="bt-text">One answer worth sitting with: God isn't waiting for them to arrive somewhere safe and finished. God moves in immediately, into a tent, right after their worst failure, and travels with them through the mess rather than meeting them on the other side of it.</p>
+          <div class="bt-note">
+            <b>Keep this in your pocket</b>
+            That twice-a-day rhythm &mdash; a morning offering and an evening one &mdash; starts here, at a tent in the desert, decades before there is any Temple at all. It is the thread that eventually becomes Shacharit and Mincha, and it's the reason the prayer schedule in section 14 lands as ancient rather than as a workaround invented after the fact.
+          </div>
+          <details class="bt-world">
+            <summary>In the world at the time</summary>
+            <div class="bt-world-body">
+              <p>A portable tent-sanctuary sounds improvised until you notice that the ancient world already had one. Egyptian reliefs of <b>Ramesses II's war camp at Kadesh</b>, from roughly this era, show a rectangular enclosure about twice as long as it is wide, entered from the east, with the king's reception tent set toward the back and an innermost chamber beyond it. That is, in outline, the Mishkan's own floor plan &mdash; the layout of a great king's field headquarters, borrowed for the God travelling with the camp.</p>
+              <p>There's a physical trace of the practice too. At <b>Timna</b>, in the Aravah, excavators found a small shrine reused in the twelfth century BCE by Midianites, and around it post holes and heavy dyed woolen cloth &mdash; the remains of a tent stretched over a sacred space. Nothing of the Mishkan itself survives, and nobody would expect it to: fabric, poles and skins don't outlast three thousand years. What survives is the evidence that people in exactly this time and place worshipped in tents they could carry.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10 -->
+    <div class="bt-node">
+      <div class="bt-marker">10</div>
+      <div class="bt-card">
+        <div class="bt-card-head">
+          <div class="bt-names">
             <div class="bt-heb">מֵי מְרִיבָה</div>
             <div class="bt-eng">Moshe's Punishment</div>
           </div>
@@ -670,9 +747,9 @@ html, body {
       </div>
     </div>
 
-    <!-- 10 -->
+    <!-- 11 -->
     <div class="bt-node">
-      <div class="bt-marker">10</div>
+      <div class="bt-marker">11</div>
       <div class="bt-card">
         <div class="bt-card-head">
           <div class="bt-names">
@@ -686,7 +763,8 @@ html, body {
           <dt>historical</dt><dd>~1200 BCE <i>&mdash; Iron Age I begins</i></dd>
         </dl>
         <div class="bt-body">
-          <p class="bt-text">Yehoshua &mdash; Moshe's student &mdash; leads the next generation in, and the promise made to Avraham finally pays off. Moshe doesn't get to finish it himself; his student finishes it for him. That's the first link in a chain that never stops: teacher to student, generation to generation.</p>
+          <p class="bt-text">Yehoshua &mdash; Moshe's student &mdash; leads the next generation in, and the promise made to Avraham finally pays off. The Mishkan comes with them, still portable, still being taken down and put back up; it moves between several sites over the following centuries before it finally comes to rest in Jerusalem.</p>
+          <p class="bt-text">Which answers the question left open back at stop 5: how many generations pass between the promise and the payoff? A great many. That gap is most of the Torah, right there. And notice who closes it &mdash; Moshe doesn't get to finish this himself, his student does. That's the first link in a chain that never stops: teacher to student, generation to generation.</p>
           <details class="bt-world">
             <summary>In the world at the time</summary>
             <div class="bt-world-body">
@@ -699,9 +777,15 @@ html, body {
       </div>
     </div>
 
-    <!-- 11 -->
+  <a class="bt-pivot bt-pivot-inline" href="/judaica/torah-chain">
+    <div class="bt-pivot-kicker">A good place to stop and turn</div>
+    <div class="bt-pivot-text">That's the whole story &mdash; the book. Now: how did that book at Sinai actually get to <i>us</i>?</div>
+    <div class="bt-pivot-go">Not kings and countries, but teacher to student, unbroken &rarr; The Chain of Torah</div>
+  </a>
+
+    <!-- 12 -->
     <div class="bt-node">
-      <div class="bt-marker">11</div>
+      <div class="bt-marker">12</div>
       <div class="bt-card">
         <div class="bt-card-head">
           <div class="bt-names">
@@ -715,8 +799,9 @@ html, body {
           <dt>historical</dt><dd>David ~1010 BCE <i>&middot; Temple built ~960 BCE</i></dd>
         </dl>
         <div class="bt-body">
-          <p class="bt-text">The short version: judges first, then kings &mdash; Shaul, then David, then Shlomo. David wants to build a permanent home for God's presence, and Shlomo is the one who builds it: the first Temple, in Jerusalem.</p>
-          <div class="bt-ask">Why a building specifically &mdash; what does a physical place do that having the Torah alone doesn't?</div>
+          <p class="bt-text">The short version: judges first, then kings &mdash; Shaul, then David, then Shlomo. David wants a permanent home for God's presence, in one fixed place rather than a tent that keeps moving, and his son Shlomo is the one who actually builds it: the first Temple, in Jerusalem.</p>
+          <p class="bt-text">It is essentially the Mishkan's blueprint rendered in stone and gold instead of curtains and poles &mdash; same layout, same idea, same twice-daily service. Just built to stay put.</p>
+          <div class="bt-ask">Why a building specifically &mdash; what does a fixed, permanent place do that a portable tent doesn't?</div>
           <details class="bt-world">
             <summary>In the world at the time</summary>
             <div class="bt-world-body">
@@ -729,9 +814,9 @@ html, body {
       </div>
     </div>
 
-    <!-- 12 -->
+    <!-- 13 -->
     <div class="bt-node">
-      <div class="bt-marker">12</div>
+      <div class="bt-marker">13</div>
       <div class="bt-card">
         <div class="bt-card-head">
           <div class="bt-names">
@@ -759,9 +844,9 @@ html, body {
       </div>
     </div>
 
-    <!-- 13 -->
+    <!-- 14 -->
     <div class="bt-node">
-      <div class="bt-marker">13</div>
+      <div class="bt-marker">14</div>
       <div class="bt-card">
         <div class="bt-card-head">
           <div class="bt-names">
@@ -777,13 +862,19 @@ html, body {
         <div class="bt-body">
           <p class="bt-text">Prayer was not invented after the Temple fell as a plan B. It had been running alongside the Temple for centuries already.</p>
           <ul class="bt-steps">
+            <li><b>The rhythm is ancient.</b> The twice-daily offering, morning and evening, didn't begin with either Temple. It began at the Mishkan, in the desert, and then ran unbroken through the first Temple and the second &mdash; over a thousand years of the same service, at the same hours, in three different buildings.</li>
             <li><b>Ezra and the Anshei Knesset HaGedolah</b>, generations before the destruction, formalize fixed blessing texts and the Amidah &mdash; while the Second Temple is still fully operational.</li>
-            <li><b>The schedule already mirrors the Temple.</b> The twice-daily Tamid offering lines up with Shacharit and Mincha. Musaf exists on Shabbat and holidays because there was an additional korban on exactly those days.</li>
-            <li><b>70 CE.</b> As Jerusalem falls, Rabban Yochanan ben Zakkai is smuggled out of the city and sets up an academy at Yavneh, so that leadership and teaching don't die with the city. To a despairing student he answers that acts of kindness now do what the offerings did &mdash; quoting Hoshea: "I desire kindness, not sacrifice."</li>
+            <li><b>The schedule was borrowed on purpose.</b> The Talmud ties the fixed prayer times directly to the Tamid offering &mdash; the morning offering to Shacharit, the afternoon one to Mincha. Maariv was added later and stayed slightly optional for a long time, because there was no fixed evening offering to match it to. Musaf exists on Shabbat and holidays because there was an additional korban on exactly those days.</li>
+            <li><b>70 CE.</b> As Jerusalem falls, Rabban Yochanan ben Zakkai is smuggled out of the city and sets up an academy at Yavneh, so that leadership and teaching don't die with the city. To a despairing student he answers that acts of kindness now do what the offerings did &mdash; quoting Hoshea: "I desire kindness, not sacrifice." That isn't a new idea invented on the spot &mdash; it's a verse that was already there, now being leaned on.</li>
             <li><b>Rabban Gamliel II</b>, at Yavneh, finalizes the fixed text and order of the Amidah &mdash; locked in, in direct response to there being no Temple left.</li>
-            <li><b>Still visible today.</b> We face Jerusalem when we daven. The Retzei blessing asks God to accept "the fire-offerings of Israel" and to restore the service. Musaf quotes the Torah's sacrifice instructions word for word.</li>
+            <li><b>Still visible today.</b> We face Jerusalem when we daven. The Retzei blessing asks God to accept "the fire-offerings of Israel" and to restore the service. Musaf quotes the Torah's sacrifice instructions for that day word for word. And Shacharit and Mincha still fall at roughly the hours the Tamid was brought &mdash; the clock itself is a fingerprint.</li>
           </ul>
           <div class="bt-ask">Was prayer a replacement for the Temple, or was it always running in parallel and simply became the whole thing once the building was gone?</div>
+          <div class="bt-heard">
+            <b>You&rsquo;ve already heard this</b>
+            <p>Think about Yom Kippur davening &mdash; the long stretch of the service where you're standing there and it starts to feel like something is being retold. That isn't a metaphor. The machzor is walking through what the Kohen Gadol actually did in the Temple on that day, step by step, out loud, together, as though the room were watching it happen.</p>
+            <p>You have already sat through a live reenactment of the Temple service, and almost certainly had no idea that's what it was.</p>
+          </div>
           <details class="bt-world">
             <summary>In the world at the time</summary>
             <div class="bt-world-body">
@@ -796,9 +887,9 @@ html, body {
       </div>
     </div>
 
-    <!-- 14 -->
+    <!-- 15 -->
     <div class="bt-node">
-      <div class="bt-marker">14</div>
+      <div class="bt-marker">15</div>
       <div class="bt-card">
         <div class="bt-card-head">
           <div class="bt-names">
@@ -812,7 +903,7 @@ html, body {
           <dt>historical</dt><dd>2026 <i>&mdash; same moment, both clocks</i></dd>
         </dl>
         <div class="bt-body">
-          <p class="bt-text">Creation, then a family, then a promise, then a nation. A book at Sinai, and a chain of people passing that book down. A building, and offerings twice a day inside it &mdash; with a matching prayer schedule running the whole time alongside it. A teacher who got out of a burning city and made sure none of it broke.</p>
+          <p class="bt-text">Creation, then a family, then a promise, then a nation. A book at Sinai. A portable tent pitched right after they'd messed up badly, so that God could live close to them anyway. A chain of people passing that book down, and a permanent building raised on that same tent's blueprint. Offerings twice a day running unbroken for over a thousand years across three different buildings, with a matching prayer schedule alongside them the entire time. A teacher who got out of a burning city and made sure none of it broke.</p>
           <p class="bt-text">And now: us. Still standing at the same times, still facing the same direction, still asking for the same thing to come back.</p>
         </div>
       </div>
