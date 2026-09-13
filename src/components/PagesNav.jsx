@@ -3,7 +3,7 @@
 const PAGES = [
   { href: '/',        label: '← JVTESTSPACE' },
   { href: '/judaica', label: 'JUDAICA' },
-  { href: '/trip',    label: 'ISRAEL TRIP' },
+  { href: 'https://centcom-inky.vercel.app/trip', label: 'ISRAEL TRIP' },
 ]
 
 export default function PagesNav({ floating = false }) {
